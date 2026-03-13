@@ -3,8 +3,30 @@ import { useForm } from '@tanstack/react-form'
 import { Field, FieldGroup, FieldLabel } from './ui/field'
 import { Input } from './ui/input'
 import { Button } from './ui/button'
+import { useTRPC } from '#/integrations/trpc/react'
+import { useRouter } from '@tanstack/react-router'
+import { useState } from 'react'
+import { useQuery } from '@tanstack/react-query'
 
 export function SearchUser() {
+  const trpc = useTRPC()
+  const router = useRouter()
+  const [submittedUsername, setSubmittedUsername] = useState<string | null>(null)
+  const [notFound, setNotFound] = useState(false)
+
+    const { isFetching } = useQuery({
+    ...trpc.dashboard.searchUser.queryOptions({ username: submittedUsername ?? '' }),
+    enabled: !!submittedUsername,
+    retry: false,
+    onSuccess: ({ login }) => {
+      router.navigate({ to: '/dashboard/$username', params: { username: login } })
+    },
+    onError: () => {
+      setNotFound(true)
+      setSubmittedUsername(null)
+    },
+  })
+
   const form = useForm({
     validators: {
       onSubmit: SearchUserSchema,
@@ -13,8 +35,8 @@ export function SearchUser() {
       username: '',
     },
     onSubmit: async ({ value }) => {
-      // TODO: function call here
-      console.log(`Searching for ${value.username}`)
+      setNotFound(false)
+      setSubmittedUsername(value.username)
     },
   })
 

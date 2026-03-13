@@ -9,10 +9,10 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
-
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as RankIndexRouteImport } from './routes/rank/index'
 import { Route as LeaderboardIndexRouteImport } from './routes/leaderboard/index'
+import { Route as DashboardIndexRouteImport } from './routes/dashboard/index'
 import { Route as AboutIndexRouteImport } from './routes/about/index'
 import { Route as ApiTrpcSplatRouteImport } from './routes/api.trpc.$'
 
@@ -31,14 +31,14 @@ const LeaderboardIndexRoute = LeaderboardIndexRouteImport.update({
   path: '/leaderboard/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const DashboardIndexRoute = DashboardIndexRouteImport.update({
+  id: '/dashboard/',
+  path: '/dashboard/',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AboutIndexRoute = AboutIndexRouteImport.update({
   id: '/about/',
   path: '/about/',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const DashboardRoute = DashboardRouteImport.update({
-  id: '/dashboard',
-  path: '/dashboard',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ApiTrpcSplatRoute = ApiTrpcSplatRouteImport.update({
@@ -50,44 +50,53 @@ const ApiTrpcSplatRoute = ApiTrpcSplatRouteImport.update({
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/about/': typeof AboutIndexRoute
+  '/dashboard/': typeof DashboardIndexRoute
   '/leaderboard/': typeof LeaderboardIndexRoute
   '/rank/': typeof RankIndexRoute
-  '/dashboard': typeof DashboardRoute
   '/api/trpc/$': typeof ApiTrpcSplatRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/about': typeof AboutIndexRoute
+  '/dashboard': typeof DashboardIndexRoute
   '/leaderboard': typeof LeaderboardIndexRoute
   '/rank': typeof RankIndexRoute
-  '/dashboard': typeof DashboardRoute
   '/api/trpc/$': typeof ApiTrpcSplatRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/about/': typeof AboutIndexRoute
+  '/dashboard/': typeof DashboardIndexRoute
   '/leaderboard/': typeof LeaderboardIndexRoute
   '/rank/': typeof RankIndexRoute
-  '/dashboard': typeof DashboardRoute
   '/api/trpc/$': typeof ApiTrpcSplatRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/about' | '/dashboard' | '/api/trpc/$'
+  fullPaths:
+    | '/'
+    | '/about/'
+    | '/dashboard/'
+    | '/leaderboard/'
+    | '/rank/'
+    | '/api/trpc/$'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/about' | '/dashboard' | '/api/trpc/$'
-  id: '__root__' | '/' | '/about' | '/dashboard' | '/api/trpc/$'
-  fullPaths: '/' | '/about/' | '/leaderboard/' | '/rank/' | 'dashboard' | '/api/trpc/$'
-  fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/about' | '/leaderboard' | '/rank' | 'dashboard' | '/api/trpc/$'
-  id: '__root__' | '/' | '/about/' | '/leaderboard/' | '/rank/' | 'dashboard' | '/api/trpc/$'
+  to: '/' | '/about' | '/dashboard' | '/leaderboard' | '/rank' | '/api/trpc/$'
+  id:
+    | '__root__'
+    | '/'
+    | '/about/'
+    | '/dashboard/'
+    | '/leaderboard/'
+    | '/rank/'
+    | '/api/trpc/$'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
-  DashboardRoute: typeof DashboardRoute
   AboutIndexRoute: typeof AboutIndexRoute
+  DashboardIndexRoute: typeof DashboardIndexRoute
   LeaderboardIndexRoute: typeof LeaderboardIndexRoute
   RankIndexRoute: typeof RankIndexRoute
   ApiTrpcSplatRoute: typeof ApiTrpcSplatRoute
@@ -116,18 +125,18 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof LeaderboardIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/dashboard/': {
+      id: '/dashboard/'
+      path: '/dashboard'
+      fullPath: '/dashboard/'
+      preLoaderRoute: typeof DashboardIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/about/': {
       id: '/about/'
       path: '/about'
       fullPath: '/about/'
       preLoaderRoute: typeof AboutIndexRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/dashboard': {
-      id: '/dashboard'
-      path: '/dashboard'
-      fullPath: '/dashboard'
-      preLoaderRoute: typeof DashboardRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/api/trpc/$': {
@@ -143,9 +152,9 @@ declare module '@tanstack/react-router' {
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AboutIndexRoute: AboutIndexRoute,
+  DashboardIndexRoute: DashboardIndexRoute,
   LeaderboardIndexRoute: LeaderboardIndexRoute,
   RankIndexRoute: RankIndexRoute,
-  DashboardRoute: DashboardRoute,
   ApiTrpcSplatRoute: ApiTrpcSplatRoute,
 }
 export const routeTree = rootRouteImport
