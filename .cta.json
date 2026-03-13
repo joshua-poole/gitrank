@@ -2,8 +2,8 @@
   "projectName": "github-ranked",
   "mode": "file-router",
   "typescript": true,
-  "packageManager": "npm",
-  "includeExamples": true,
+  "packageManager": "pnpm",
+  "includeExamples": false,
   "tailwind": true,
   "addOnOptions": {
     "prisma": {
@@ -11,19 +11,19 @@
     }
   },
   "envVarValues": {},
-  "git": true,
+  "git": false,
   "routerOnly": false,
   "version": 1,
   "framework": "react",
   "chosenAddOns": [
     "eslint",
+    "cloudflare",
     "neon",
     "prisma",
+    "compiler",
     "shadcn",
     "tRPC",
-    "better-auth",
-    "compiler",
     "tanstack-query",
-    "resume"
+    "t3env"
   ]
 }

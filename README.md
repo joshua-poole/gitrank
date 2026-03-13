@@ -5,8 +5,8 @@ Welcome to your new TanStack Start app!
 To run this application:
 
 ```bash
-npm install
-npm run dev
+pnpm install
+pnpm dev
 ```
 
 # Building For Production
@@ -14,7 +14,7 @@ npm run dev
 To build this application for production:
 
 ```bash
-npm run build
+pnpm build
 ```
 
 ## Testing
@@ -22,7 +22,7 @@ npm run build
 This project uses [Vitest](https://vitest.dev/) for testing. You can run the tests with:
 
 ```bash
-npm run test
+pnpm test
 ```
 
 ## Styling
@@ -36,7 +36,7 @@ If you prefer not to use Tailwind CSS:
 1. Remove the demo pages in `src/routes/demo/`
 2. Replace the Tailwind import in `src/styles.css` with your own styles
 3. Remove `tailwindcss()` from the plugins array in `vite.config.ts`
-4. Uninstall the packages: `npm install @tailwindcss/vite tailwindcss -D`
+4. Uninstall the packages: `pnpm add @tailwindcss/vite tailwindcss --dev`
 
 ## Linting & Formatting
 
@@ -44,9 +44,9 @@ If you prefer not to use Tailwind CSS:
 This project uses [eslint](https://eslint.org/) and [prettier](https://prettier.io/) for linting and formatting. Eslint is configured using [tanstack/eslint-config](https://tanstack.com/config/latest/docs/eslint). The following scripts are available:
 
 ```bash
-npm run lint
-npm run format
-npm run check
+pnpm lint
+pnpm format
+pnpm check
 ```
 
 
@@ -69,122 +69,22 @@ pnpm dlx shadcn@latest add button
 ```
 
 
-## Setting up Better Auth
+## T3Env
 
-1. Generate and set the `BETTER_AUTH_SECRET` environment variable in your `.env.local`:
+- You can use T3Env to add type safety to your environment variables.
+- Add Environment variables to the `src/env.mjs` file.
+- Use the environment variables in your code.
 
-   ```bash
-   npx -y @better-auth/cli secret
-   ```
+### Usage
 
-2. Visit the [Better Auth documentation](https://www.better-auth.com) to unlock the full potential of authentication in your app.
+```ts
+import { env } from "#/env";
 
-### Adding a Database (Optional)
-
-Better Auth can work in stateless mode, but to persist user data, add a database:
-
-```typescript
-// src/lib/auth.ts
-import { betterAuth } from "better-auth";
-import { Pool } from "pg";
-
-export const auth = betterAuth({
-  database: new Pool({
-    connectionString: process.env.DATABASE_URL,
-  }),
-  // ... rest of config
-});
-```
-
-Then run migrations:
-
-```bash
-npx -y @better-auth/cli migrate
+console.log(env.VITE_APP_TITLE);
 ```
 
 
-# Resume Example
 
-A professional resume template built with TanStack Start and content-collections for Netlify deployment.
-
-## Features
-
-- **Content Collections**: Work experience and education managed as markdown files
-- **Skills Filter**: Interactive sidebar to filter jobs by skills/technologies
-- **Beautiful UI**: Modern design with shadcn/ui components
-- **SSR Ready**: Full server-side rendering with TanStack Start
-
-## Project Structure
-
-```
-├── content/
-│   ├── jobs/              # Work experience entries
-│   └── education/         # Education entries
-├── src/
-│   ├── components/
-│   │   └── ui/            # Shadcn UI components
-│   │       ├── badge.tsx
-│   │       ├── card.tsx
-│   │       ├── checkbox.tsx
-│   │       ├── hover-card.tsx
-│   │       └── separator.tsx
-│   ├── lib/
-│   │   └── utils.ts       # Utility functions
-│   └── routes/
-│       ├── __root.tsx     # Root layout
-│       └── index.tsx      # Resume page
-└── public/
-    └── headshot-on-white.jpg
-```
-
-## Adding Work Experience
-
-Create a new markdown file in `content/jobs/` with the following frontmatter:
-
-```markdown
----
-jobTitle: Your Job Title
-company: Company Name
-location: City, State
-startDate: 2024-01-01
-endDate: 2024-12-31  # Optional - omit for current position
-summary: Brief summary of your role
-tags:
-  - React
-  - TypeScript
-  - Web Development
----
-
-Detailed description of your responsibilities and achievements...
-```
-
-## Adding Education
-
-Create a new markdown file in `content/education/`:
-
-```markdown
----
-school: School Name
-summary: Degree or Program Name
-startDate: 2020-01-01
-endDate: 2024-01-01
-tags:
-  - Relevant
-  - Skills
----
-
-Details about your education...
-```
-
-## Development
-
-```bash
-# Start development server
-npm run dev
-
-# Build for production
-npm run build
-```
 
 
 
