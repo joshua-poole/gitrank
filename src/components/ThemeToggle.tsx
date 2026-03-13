@@ -71,7 +71,7 @@ export default function ThemeToggle() {
       : `Theme mode: ${mode}. Click to switch mode.`
 
   return (
-    <Button onClick={toggleMode} aria-label={label} title={label} className='rounded-full aspect-square h-full bg-foreground'>
+    <Button onClick={toggleMode} variant="outline" aria-label={label} title={label} className='rounded-full aspect-square h-full'>
       {mode === 'auto' ? (
         <DesktopIcon />
       ) : mode === 'dark' ? (

@@ -36,7 +36,7 @@ export const Route = createRootRouteWithContext<MyRouterContext>()({
         content: 'width=device-width, initial-scale=1',
       },
       {
-        title: 'Github Rank Tracker',
+        title: 'GitRank.GG | Github Rank Tracker',
       },
     ],
     links: [
