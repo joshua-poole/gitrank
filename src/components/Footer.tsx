@@ -37,7 +37,7 @@ export default function Footer() {
       >
         GITRANK.GG
       </div>
-      <div className="flex flex-col w-full gap-0 items-center justify-center">
+      <div className="flex flex-col w-full gap-0 p-10 items-center justify-center">
         <p className="p-5 pb-2.5 text-sm m-0">
           &copy; {year} Claudius Maximus. All rights reserved.
         </p>

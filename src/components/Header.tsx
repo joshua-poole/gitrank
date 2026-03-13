@@ -20,7 +20,7 @@ export default function Header() {
         <Link to="/"><h1 className="font-bold text-lg">GITRANK.GG</h1></Link>
         <NavigationMenuList>
           {navItems.map((el) => (
-            <NavigationMenuItem>
+            <NavigationMenuItem key={el.label}>
               <NavigationMenuLink asChild className='text-sm'>
                 <Link to={el.path}>{el.label}</Link>
               </NavigationMenuLink>
