@@ -186,7 +186,7 @@ def get_user_period_commit_score(
 
 
 if __name__ == "__main__":
-    artifact = joblib.load(ARTEFACTS_DIR / "20260314_173052.pkl")
+    artifact = joblib.load(ARTEFACTS_DIR / "regression.pkl")
     clf, scaler = artifact["model"], artifact["scaler"]
 
     users = [
