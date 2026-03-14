@@ -27,7 +27,7 @@ export default function Footer() {
         ref={textRef}
         onMouseMove={handleMouseMove}
         onMouseLeave={handleMouseLeave}
-        className="w-full flex text-[15vw] font-bold justify-center select-none"
+        className="w-full flex text-[15vw] font-bold justify-center select-none text-primary"
         style={{
           maskImage:
             'radial-gradient(circle 20vw at var(--x, -100vw) var(--y, -100vw), black 0%, rgba(0,0,0,0.25) 100%)',

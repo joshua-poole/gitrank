@@ -7,6 +7,7 @@ export const LeaderboardColumnSchema = z.object({
   position: z.int(),
   elo: UserModelSchema.shape.elo,
   commits: LeaderboardModelSchema.shape.commits,
+  prs: LeaderboardModelSchema.shape.prs,
 })
 
 export type LeaderboardColumn = z.infer<typeof LeaderboardColumnSchema>
