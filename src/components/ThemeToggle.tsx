@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import { Button } from './ui/button'
-import { DropdownMenu, DropdownMenuTrigger } from './ui/dropdown-menu'
+
 import { CloudMoonIcon, DesktopIcon, SunIcon } from '@phosphor-icons/react'
 
 type ThemeMode = 'light' | 'dark' | 'auto'
