@@ -1,7 +1,9 @@
 # Project specific
 data/*
 !data/.gitkeep
-*.pkl
+
+artefacts/*
+!artefacts/.gitkeep
 
 # Byte-compiled / optimized / DLL files
 __pycache__/

@@ -7,8 +7,7 @@ from rich.text import Text
 from sklearn.linear_model import LogisticRegression
 from sklearn.preprocessing import StandardScaler
 
-from .config import MODEL
-from .regression import MODEL_PATH
+from .config import ARTEFACTS_DIR, MODEL
 
 NORMAL_THRESHOLD = 0.3
 STRESSED_THRESHOLD = 0.7
@@ -20,6 +19,8 @@ class CommitClassification:
     score: float
     label: str
     is_stressed: bool
+    author: str = "unknown"
+    timestamp: str = ""
 
     def render(self) -> Text:
         color = (
@@ -29,7 +30,10 @@ class CommitClassification:
             if self.label == "uncertain"
             else "green"
         )
-        return Text(f"{self.score:.4f} [{self.label}] {self.message}", style=color)
+        time_str = f"[{self.timestamp[:10]}] " if self.timestamp else ""
+        return Text(
+            f"{time_str}{self.score:.4f} [{self.label}] {self.message}", style=color
+        )
 
 
 def classify(
@@ -56,19 +60,20 @@ def classify(
 
 
 if __name__ == "__main__":
-    artifact = joblib.load(MODEL_PATH)
+    artifact = joblib.load(ARTEFACTS_DIR / "20260314_161301.pkl")
     clf = artifact["model"]
     scaler = artifact["scaler"]
 
     messages = [
-        "fix bug",
-        "please work",
-        "feat(auth): add login validation",
-        "i have no idea what im doing",
-        "update dependencies",
-        "shit shit shit prod is down",
-        "refactor user model",
-        "yolo",
+        # "fix bug",
+        # "please work",
+        # "feat(auth): add login validation",
+        # "i have no idea what im doing",
+        # "update dependencies",
+        # "shit shit shit prod is down",
+        # "refactor user model",
+        # "yolo",
+        # "fixed the schema which was really fun (yay)!",
     ]
 
     for message in messages:

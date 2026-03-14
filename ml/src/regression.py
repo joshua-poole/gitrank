@@ -2,6 +2,8 @@
 # Pylance can't resolve FAISS C++ bindings.
 # type: ignore[call-arg]
 
+from datetime import datetime
+
 import faiss
 import joblib
 import numpy as np
@@ -18,7 +20,7 @@ from .config import (
     load_embeddings,
 )
 
-MODEL_PATH = ARTEFACTS_DIR / "model.pkl"
+MODEL_PATH = ARTEFACTS_DIR / f"{datetime.now().strftime('%Y%m%d_%H%M%S')}.pkl"
 K_POSITIVE = 500
 K_NEGATIVE = 500
 
