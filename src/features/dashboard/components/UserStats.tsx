@@ -9,12 +9,16 @@ interface UserStatsProps {
 
 function StatCard({ label, value }: { label: string; value: string | number }) {
   return (
-    <div className="bg-[var(--surface)] rounded-xl px-4 py-3 flex flex-col gap-1 border border-[var(--line)]">
-      <span className="text-xs text-[var(--sea-ink-soft)] font-medium uppercase tracking-wide">
-        {label}
-      </span>
-      <span className="text-xl font-bold text-[var(--sea-ink)]">{value}</span>
-    </div>
+    <Card className="border-[var(--line)] bg-[var(--surface)]">
+      <CardHeader className="pb-1 pt-3 px-4">
+        <CardTitle className="text-xs text-[var(--sea-ink-soft)] font-medium uppercase tracking-wide">
+          {label}
+        </CardTitle>
+      </CardHeader>
+      <CardContent className="px-4 pb-3">
+        <span className="text-xl font-bold text-[var(--sea-ink)]">{value}</span>
+      </CardContent>
+    </Card>
   )
 }
 
