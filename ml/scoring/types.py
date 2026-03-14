@@ -1,13 +1,6 @@
 # types.py
 from datetime import datetime
-from typing import NotRequired, Optional, TypedDict
-
-
-class Tier(TypedDict):
-    rank: str
-    minElo: int
-    maxElo: int
-    description: str
+from typing import TypedDict
 
 
 class CommitData(TypedDict):
@@ -16,13 +9,7 @@ class CommitData(TypedDict):
     message: str  # Commit message
     additions: int  # Lines added
     deletions: int  # Lines deleted
-    filesChanged: int  # Number of files touched
-
-
-class MLSignals(TypedDict):
-    stressLevel: float  # 0 chill, 1 stressed
-    msgQuality: NotRequired[Optional[float]]
-    sloppiness: NotRequired[Optional[float]]
+    stressLevel: float  # 0 chill, 1 stressed (from ML)
 
 
 class Breakdown(TypedDict):
@@ -32,8 +19,6 @@ class Breakdown(TypedDict):
     messageQualityDeduction: int
 
 
-class SpikeResult(TypedDict):
-    glucoseLevel: int
-    tier: Tier
+class Result(TypedDict):
+    eloDelta: int
     breakdown: Breakdown
-    recommendation: str
