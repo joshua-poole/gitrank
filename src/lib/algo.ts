@@ -1,182 +1,149 @@
-// src/lib/scoring/algorithm.ts
-//
-/**
- * CORTISOL METER (0 = dead, 5000 = screaming)
- *
- * Low cortisol = zen (or dead, we'll assume zen).
- *
- * Each commit spikes cortisol based on:
- * - Lines changed (more changes = more stress)
- * - Late night coding (3am = cortisol spike)
- * - Weekend work (no boundaries = chronic stress)
- * - Burstiness (erratic patterns = acute stress)
- *
- * ML provides stress signal from commit messages, which:
- * - Amplifies cortisol when message quality is poor (actual crashout)
- * - Buffers cortisol when message quality is high (passionate != stressed)
- *
- * Time decay: recent cortisol spikes matter more (1% decay per day)
- * Final score: 0-5000 (higher = more cortisol = closer to burnout)
- */
-
 import type { CommitData, MLSignals, SpikeResult } from './types'
 import { getTierFromLevel } from './tiers'
 
-export class CortisolMeter {
+export class MMR {
   private readonly DECAY_PER_DAY = 0.99
   private readonly MAX_AGE_DAYS = 90
+  private readonly TZ_OFFSET_MIN = 0
 
   calculate(commits: CommitData[], signals: MLSignals): SpikeResult {
     const now = new Date()
-    let totalCortisol = 0
-    let totalWeight = 0
+    const recent = commits
+      .filter(
+        (c) =>
+          (now.getTime() - c.timestamp.getTime()) / 86400000 <=
+          this.MAX_AGE_DAYS,
+      )
+      .sort((a, b) => a.timestamp.getTime() - b.timestamp.getTime())
 
-    const sorted = [...commits].sort(
-      (a, b) => a.timestamp.getTime() - b.timestamp.getTime(),
-    )
+    const burstiness = this.simpleBurstiness(recent)
 
-    const burstiness = this.calcBurstiness(sorted)
+    let total = 0
+    let weightSum = 0
 
-    for (const c of commits) {
-      const ageDays =
-        (now.getTime() - c.timestamp.getTime()) / (1000 * 60 * 60 * 24)
-      if (ageDays > this.MAX_AGE_DAYS) continue
+    for (const c of recent) {
+      const ageDays = (now.getTime() - c.timestamp.getTime()) / 86400000
+      const w = Math.pow(this.DECAY_PER_DAY, ageDays)
 
-      // Recent spikes hit harder
-      const weight = Math.pow(this.DECAY_PER_DAY, ageDays)
+      const spike = this.spike(c, burstiness, signals.stressLevel)
 
-      const spike = this.calcCortisolSpike(c, burstiness, signals.stressLevel)
-
-      totalCortisol += spike * weight
-      totalWeight += weight
+      total += spike * w
+      weightSum += w
     }
 
-    // Normalize to 0-5000 scale
-    let cortisol = totalWeight > 0 ? (totalCortisol / totalWeight) * 100 : 0
-    cortisol = Math.min(5000, Math.max(0, Math.round(cortisol)))
+    // No extra *100 — constants tuned to land in range naturally
+    let level = weightSum > 0 ? total / weightSum : 0
+    level = Math.min(5000, Math.max(0, Math.round(level)))
 
     return {
-      glucoseLevel: cortisol, // Keep field name for compatibility
-      tier: getTierFromLevel(cortisol),
+      glucoseLevel: level,
+      tier: getTierFromLevel(level),
       breakdown: {
         stressContribution: Math.round(signals.stressLevel * 100),
-        lateNightContribution: this.calcLateNightScore(commits),
+        lateNightContribution: this.lateNightScore(recent),
         burstContribution: Math.round(burstiness * 100),
-        messageQualityDeduction: Math.round(
-          this.calcAvgMessageQuality(commits) * 100,
-        ),
+        messageQualityDeduction: Math.round(this.avgMsgQuality(recent) * 100),
       },
-      recommendation: this.getRecommendation(cortisol, signals),
+      recommendation: this.getRecommendation(level, signals),
     }
   }
 
-  private calcCortisolSpike(
-    c: CommitData,
-    burstiness: number,
-    stressSignal: number,
-  ): number {
-    let spike = 0
-
-    // More code = more cortisol (log scale so 1000 lines isn't 10x worse)
+  private spike(c: CommitData, burst: number, stressSignal: number): number {
     const changes = c.additions + c.deletions
-    spike += Math.log10(changes + 1) * 10
+    const msgQ = this.msgQuality(c.message)
 
-    // Message quality modulates how stress affects cortisol
-    const msgQuality = this.calcMessageQuality(c.message)
+    // Base from size (log scale to avoid punishing big refactors too hard)
+    let s = Math.log10(changes + 1) * 8
 
-    // Stress spikes cortisol more when messages are low quality (actual crashout)
-    // High quality messages = passionate coding, not stressed coding
-    const stressMultiplier = this.lerp(
-      0.8,
-      1.5,
-      stressSignal * (1 - msgQuality),
-    )
-    spike *= stressMultiplier
+    // Stress modulated by message quality (good msg buffers stress)
+    const stressMult = this.lerp(0.85, 1.35, stressSignal * (1 - msgQ))
+    s *= stressMult
 
-    // Late night = cortisol spike
-    // NOTE: note sure if this will be accurate due to timezoen
-    const hour = c.timestamp.getHours()
+    // Late night (peaks ~3am) — smaller, but noticeable
+    const hour = this.hourLocal(c)
     const isLate = hour >= 23 || hour <= 5
     if (isLate) {
-      // Peak cortisol at 3-4am
       const factor =
         hour >= 23
-          ? this.lerp(0.3, 1.0, (hour - 23) / 5)
-          : this.lerp(1.0, 0.5, hour / 5)
-      spike += 20 * factor
+          ? this.lerp(0.4, 1.0, (hour - 23) / 5)
+          : this.lerp(1.0, 0.6, hour / 5)
+      s += 10 * factor
     }
 
-    // Weekend work = chronic stress
-    const day = c.timestamp.getDay()
-    if (day === 0 || day === 6) spike += 15
+    // Weekend flag — chronic, small
+    const day = this.dayLocal(c)
+    if (day === 0 || day === 6) s += 8
 
-    // Erratic patterns = acute stress spikes
-    spike += burstiness * 30
+    // Burstiness — erratic pattern
+    s += burst * 15
 
-    return spike
+    return s
   }
 
-  private calcBurstiness(commits: CommitData[]): number {
+  private simpleBurstiness(commits: CommitData[]): number {
     if (commits.length < 3) return 0
-
-    const intervals: number[] = []
+    const hours: number[] = []
     for (let i = 1; i < commits.length; i++) {
-      const diff =
-        commits[i].timestamp.getTime() - commits[i - 1].timestamp.getTime()
-      intervals.push(diff / (1000 * 60 * 60))
+      const diffH =
+        (commits[i].timestamp.getTime() - commits[i - 1].timestamp.getTime()) /
+        3600000
+      hours.push(Math.max(0, diffH))
     }
-
-    const avg = intervals.reduce((a, b) => a + b, 0) / intervals.length
+    const avg = hours.reduce((a, b) => a + b, 0) / hours.length
     const variance =
-      intervals.reduce((a, b) => a + Math.pow(b - avg, 2), 0) / intervals.length
-
-    // Higher variance = more bursty = higher cortisol
-    return Math.min(1, variance / 48)
+      hours.reduce((a, b) => a + Math.pow(b - avg, 2), 0) / hours.length
+    const sd = Math.sqrt(variance)
+    const cv = avg > 0 ? sd / avg : 0
+    return Math.min(1, cv)
   }
 
-  private calcLateNightScore(commits: CommitData[]): number {
+  private lateNightScore(commits: CommitData[]): number {
     if (commits.length === 0) return 0
-
     const late = commits.filter((c) => {
-      const hour = c.timestamp.getHours()
-      return hour >= 23 || hour <= 5
+      const h = this.hourLocal(c)
+      return h >= 23 || h <= 5
     }).length
-
     return Math.min(100, (late / commits.length) * 200)
   }
 
-  private calcAvgMessageQuality(commits: CommitData[]): number {
+  private avgMsgQuality(commits: CommitData[]): number {
     if (commits.length === 0) return 0
-
-    let total = 0
-    for (const c of commits) {
-      total += this.calcMessageQuality(c.message)
-    }
-    return total / commits.length
+    let t = 0
+    for (const c of commits) t += this.msgQuality(c.message)
+    return t / commits.length
   }
 
-  private calcMessageQuality(msg: string): number {
+  private msgQuality(msg: string): number {
     let score = 0.5
-
     if (msg.length > 50) score += 0.3
     else if (msg.length > 20) score += 0.2
     else if (msg.length > 10) score += 0.1
 
-    if (/^(feat|fix|docs|style|refactor|test|chore)/i.test(msg)) {
-      score += 0.2
-    }
-
-    if (msg.split(' ').length < 3) score -= 0.2
+    if (/^(feat|fix|docs|style|refactor|test|chore)/i.test(msg)) score += 0.2
+    if (msg.split(/\s+/).length < 3) score -= 0.2
 
     return Math.max(0, Math.min(1, score))
   }
 
-  private getRecommendation(cortisol: number, signals: MLSignals): string {
-    return 'Funny message'
+  private getRecommendation(level: number, signals: MLSignals): string {
+    if (level >= 4000) return ''
+    if (level >= 3000) return ''
+    if (level >= 2000) return ''
+    return ''
   }
 
-  private lerp(start: number, end: number, t: number): number {
+  private hourLocal(c: CommitData): number {
+    const ms = c.timestamp.getTime() + this.TZ_OFFSET_MIN * 60000
+    return new Date(ms).getUTCHours()
+  }
+
+  private dayLocal(c: CommitData): number {
+    const ms = c.timestamp.getTime() + this.TZ_OFFSET_MIN * 60000
+    return new Date(ms).getUTCDay()
+  }
+
+  private lerp(a: number, b: number, t: number) {
     const clamped = Math.max(0, Math.min(1, t))
-    return start + (end - start) * clamped
+    return a + (b - a) * clamped
   }
 }
