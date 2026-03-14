@@ -61,3 +61,5 @@ function RouteComponent() {
     
   )
 }
+
+//make card component, add to home page.

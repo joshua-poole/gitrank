@@ -1,4 +1,4 @@
-import { CalendarDotsIcon, GlobeIcon } from '@phosphor-icons/react'
+import { CalendarDotsIcon, GlobeIcon, GitCommitIcon } from '@phosphor-icons/react'
 import { Card, CardContent } from './ui/card'
 import { Separator } from './ui/separator'
 import { Fragment } from 'react/jsx-runtime'
@@ -15,6 +15,11 @@ export function SeasonStats() {
       Icon: GlobeIcon,
       title: 'Tracked Coders',
       value: '1,200',
+    },
+    {
+      Icon: GitCommitIcon,
+      title: 'Commits Analysed',
+      value: '4.2M',
     },
   ]
 
