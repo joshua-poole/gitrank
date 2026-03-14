@@ -1,4 +1,4 @@
-import { PrismaClient } from '../src/generated/prisma/client.js'
+import { PrismaClient } from '../generated/prisma/client.ts'
 
 import { PrismaPg } from '@prisma/adapter-pg'
 
@@ -11,19 +11,14 @@ const prisma = new PrismaClient({ adapter })
 async function main() {
   console.log('🌱 Seeding database...')
 
-  // Clear existing todos
-  await prisma.todo.deleteMany()
-
-  // Create example todos
-  const todos = await prisma.todo.createMany({
-    data: [
-      { title: 'Buy groceries' },
-      { title: 'Read a book' },
-      { title: 'Workout' },
-    ],
+  const season = await prisma.season.create({
+    data: {
+      startDate: new Date(),
+      endDate: new Date(Date.now() + 90 * 24 * 60 * 60 * 1000),
+    },
   })
 
-  console.log(`✅ Created ${todos.count} todos`)
+  console.log(`✅ Created season ${season.id}`)
 }
 
 main()
