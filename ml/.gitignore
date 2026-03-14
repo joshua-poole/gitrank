@@ -1,9 +1,9 @@
 # Project specific
-data/*
-!data/.gitkeep
+src/data/*
+!src/data/.gitkeep
 
-artefacts/*
-!artefacts/.gitkeep
+src/artefacts/*
+!src/artefacts/.gitkeep
 
 # Byte-compiled / optimized / DLL files
 __pycache__/

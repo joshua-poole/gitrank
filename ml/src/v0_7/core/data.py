@@ -1,8 +1,8 @@
 import json
 import random
-from datetime import datetime
 from functools import lru_cache
 from pathlib import Path
+from typing import NamedTuple
 
 import numpy as np
 import pandas as pd
@@ -10,9 +10,8 @@ import torch
 from sentence_transformers import SentenceTransformer
 from tqdm import tqdm
 
-DATA_DIR = Path(__file__).resolve().parents[1] / "data"
-ARTEFACTS_DIR = Path(__file__).resolve().parents[1] / "artefacts"
-
+DATA_DIR = Path(__file__).resolve().parents[2] / "data"
+ARTEFACTS_DIR = Path(__file__).resolve().parents[2] / "artefacts"
 DATASET_PATH = DATA_DIR / "dhruvildave_github-commit-messages-dataset.csv"
 
 DEVICE = "cuda" if torch.cuda.is_available() else "cpu"
@@ -21,32 +20,36 @@ MODEL = SentenceTransformer("sentence-transformers/all-MiniLM-L6-v2", device=DEV
 SPLIT_RATIO = 0.7
 
 
+class SplitEmbeddings(NamedTuple):
+    pos_train: np.ndarray
+    neg_train: np.ndarray
+    pos_test: np.ndarray
+    neg_test: np.ndarray
+
+
 def load_embeddings(
+    export_path: Path,
     chunk_size: int,
-    export_path: Path | None = None,
     total_rows: int | None = None,
     batch_size: int = 1024,
+    truncate_length: int = 100,
 ) -> torch.Tensor:
-    if export_path is None:
-        export_path = ARTEFACTS_DIR / f"{datetime.now().strftime('%Y%m%d_%H%M%S')}.pt"
-
     if export_path.exists():
         print("Loading cached embeddings")
-        return torch.load(export_path, map_location=DEVICE)
+        return torch.load(export_path)
 
-    print("Computing embeddings")
-    total_chunks = (total_rows // chunk_size) if total_rows is not None else None
+    print("Calculating embeddings")
     chunks = []
     for chunk in tqdm(
         pd.read_csv(DATASET_PATH, chunksize=chunk_size, usecols=["message"]),
-        total=total_chunks,
+        total=(total_rows // chunk_size) if total_rows else None,
     ):
         msgs = (
             chunk["message"]
             .fillna("")
             .str.strip()
             .str.replace(r"\s+", " ", regex=True)
-            .str[:100]
+            .str[:truncate_length]
             .tolist()
         )
         if not msgs:
@@ -59,32 +62,12 @@ def load_embeddings(
                     batch_size=batch_size,
                     show_progress_bar=False,
                     convert_to_tensor=True,
-                ).cpu()
+                )
             )
+
     embs = torch.cat(chunks)
     torch.save(embs, export_path)
-    return embs.to(DEVICE)
-
-
-def load_messages(
-    export_path: Path | None = None,
-) -> np.ndarray:
-    if export_path is None:
-        export_path = ARTEFACTS_DIR / f"{datetime.now().strftime('%Y%m%d_%H%M%S')}.npy"
-
-    if export_path.exists():
-        print("Loading cached messages")
-        return np.load(export_path, allow_pickle=True)
-
-    print("Computing messages")
-    msgs = (
-        pd.read_csv(DATASET_PATH, usecols=["message"])["message"]
-        .fillna("")
-        .str.strip()
-        .to_numpy(dtype=object)
-    )
-    np.save(export_path, msgs)
-    return msgs
+    return embs
 
 
 @lru_cache(maxsize=1)
@@ -105,33 +88,22 @@ def get_signals() -> dict:
     }
 
 
-@lru_cache(maxsize=1)
-def get_train_queries() -> tuple[np.ndarray, np.ndarray]:
-    signals = get_signals()
+def _encode(messages: list[str]) -> np.ndarray:
     with torch.no_grad():
-        pos = MODEL.encode(
-            signals["positive_train"],
+        return MODEL.encode(
+            messages,
             normalize_embeddings=True,
             convert_to_tensor=False,
             show_progress_bar=True,
         ).astype(np.float32)
-        neg = MODEL.encode(
-            signals["negative_train"],
-            normalize_embeddings=True,
-            convert_to_tensor=False,
-            show_progress_bar=True,
-        ).astype(np.float32)
-    return pos, neg
 
 
 @lru_cache(maxsize=1)
-def get_test_embeddings() -> tuple[np.ndarray, np.ndarray]:
+def get_split_embeddings() -> SplitEmbeddings:
     signals = get_signals()
-    with torch.no_grad():
-        pos = MODEL.encode(
-            signals["positive_test"], normalize_embeddings=True, convert_to_tensor=False
-        )
-        neg = MODEL.encode(
-            signals["negative_test"], normalize_embeddings=True, convert_to_tensor=False
-        )
-    return pos, neg
+    return SplitEmbeddings(
+        _encode(signals["positive_train"]),
+        _encode(signals["negative_train"]),
+        _encode(signals["positive_test"]),
+        _encode(signals["negative_test"]),
+    )

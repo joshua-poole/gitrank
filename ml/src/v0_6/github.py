@@ -100,12 +100,12 @@ def compute_stress_score(results: list) -> float:
 
 
 if __name__ == "__main__":
-    artifact = joblib.load(ARTEFACTS_DIR / "20260314_161301.pkl")
+    artifact = joblib.load(ARTEFACTS_DIR / "20260314_173052.pkl")
     clf = artifact["model"]
     scaler = artifact["scaler"]
 
-    repos = ["NathanTheDev/Hashiwokakero-Solver"]
-    repo_results = defaultdict(list)
+    repos = ["NathanTheDev/Hashiwokakero-Solver", "joshua-poole/gitrank"]
+    repo_results = defaultdict(list)    
 
     rprint(
         f"[bold blue]Analyzing stress levels in {len(repos)} repositorie(s)...[/bold blue]"
