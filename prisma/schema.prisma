@@ -42,6 +42,9 @@ model Leaderboard {
   userId              BigInt
   user                User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   position            Int
+  commits             Int
+  issues              Int
+  prs                 Int
   seasonId            BigInt
   season              Season   @relation(fields: [seasonId], references: [id], onDelete: Cascade)
   @@id([userId, seasonId])
