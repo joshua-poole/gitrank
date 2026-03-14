@@ -2,6 +2,7 @@ import { Card, CardContent, CardHeader, CardTitle } from './ui/card'
 import { Button } from './ui/button'
 import { Link } from '@tanstack/react-router'
 import { Separator } from './ui/separator'
+import { ChartBarIcon } from '@phosphor-icons/react'
 
 export function TopRanked() {
   // TODO: Replace with api call
@@ -25,8 +26,13 @@ export function TopRanked() {
 
   return (
     <Card className="w-full sm:max-w-3/4 md:max-w-1/2">
-      <CardHeader>
+      <CardHeader className="flex flex-row justify-between items-center">
         <CardTitle>Top Ranked this Season</CardTitle>
+        <Button asChild variant="outline">
+          <Link to="/leaderboard">
+            <ChartBarIcon className='size-5 text-foreground' />
+          </Link>
+        </Button>
       </CardHeader>
       <CardContent>
         {topRanked.map((el, index) => (
@@ -43,10 +49,14 @@ export function TopRanked() {
                   alt={`${el.name} profile picture`}
                 />
                 <span className="flex flex-col gap-1 flex-1 text-left">
-                  <p className="text-base font-semibold text-foreground">{el.name}</p>
+                  <p className="text-base font-semibold text-foreground">
+                    {el.name}
+                  </p>
                   <p className="text-chart-1">{el.elo} RR</p>
                 </span>
-                <p className="ml-auto text-lg font-bold text-foreground">#{el.rank}</p>
+                <p className="ml-auto text-lg font-bold text-foreground">
+                  #{el.rank}
+                </p>
               </Link>
             </Button>
             {index < topRanked.length - 1 && <Separator />}

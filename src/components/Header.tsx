@@ -9,7 +9,7 @@ import ThemeToggle from './ThemeToggle'
 
 const navItems = [
   { label: 'Home', path: '/' },
-  { label: 'Leaderboard', path: '/' },
+  { label: 'Leaderboard', path: '/leaderboard' },
   { label: 'About', path: '/About' },
 ]
 
