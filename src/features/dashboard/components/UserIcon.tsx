@@ -38,7 +38,7 @@ export function UserIcon({ username, size = 64 }: UserIconProps) {
       alt={`${username}'s GitHub avatar`}
       width={size}
       height={size}
-			className="rounded-full ring-2 ring-[var(--lagoon)] shrink-0"
+			className="rounded-full ring-2 ring-primary shrink-0"
     />
   )
 }

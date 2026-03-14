@@ -1,6 +1,5 @@
 import { useQuery } from '@tanstack/react-query'
 import { useTRPC } from '#/integrations/trpc/react'
-import { Card, CardContent } from '#/components/ui/card'
 import type { Rank } from '#/server/services/dashboard/getUserRank'
 
 interface UserRankProps {
@@ -27,6 +26,17 @@ const RANK_IMAGE: Record<Rank, string> = {
   PLATINUM: '/ranks/platinum.png',
   DIAMOND: '/ranks/diamond.png',
   LINUS: '/ranks/linus.png',
+}
+
+const RANK_COLORS: Record<Rank, string> = {
+  UNRANKED: '#9ca3af',   // gray
+  PLASTIC:  '#e5e7eb',   // light gray
+  BRONZE:   '#cd7f32',   // bronze
+  SILVER:   '#c0c0c0',   // silver
+  GOLD:     '#ffd700',   // gold
+  PLATINUM: '#e5e4e2',   // platinum
+  DIAMOND:  '#b9f2ff',   // diamond blue
+  LINUS:    '#f97316',   // orange
 }
 
 export function UserRank({ username }: UserRankProps) {
@@ -56,10 +66,10 @@ export function UserRank({ username }: UserRankProps) {
         className="w-20 h-20 object-contain"
       />
       <div className="flex flex-col">
-        <p className="text-xs text-[var(--sea-ink-soft)] uppercase tracking-wide font-medium">
+        <p className="text-xs text-primary uppercase tracking-wide font-medium">
           Rank
         </p>
-        <p className="text-2xl font-bold text-[var(--sea-ink)]">
+        <p className="text-2xl font-bold" style={{ color: RANK_COLORS[rank] }}>
           {RANK_LABELS[rank]}
         </p>
       </div>

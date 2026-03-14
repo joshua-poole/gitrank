@@ -16,7 +16,7 @@ interface ContributionGraphProps {
 const chartConfig = {
   count: {
     label: 'Commits',
-    color: 'var(--lagoon)',
+    color: 'var(--primary)',
   },
 } satisfies ChartConfig
 
@@ -33,7 +33,7 @@ export function ContributionGraph({ username }: ContributionGraphProps) {
   return (
     <Card className="border-[var(--line)]]">
       <CardHeader className="pb-2">
-        <CardTitle className="text-sm]">Contributions — last 90 days</CardTitle>
+        <CardTitle className="text-sm">Contributions — last 90 days</CardTitle>
       </CardHeader>
       <CardContent>
         <ChartContainer config={chartConfig} className="h-40 w-full">
@@ -47,7 +47,7 @@ export function ContributionGraph({ username }: ContributionGraphProps) {
               tickLine={false}
               axisLine={false}
               tickMargin={8}
-              tick={{ fill: 'var(--sea-ink-soft)', fontSize: 11 }}
+              tick={{ fill: 'var(--primary)', fontSize: 11 }}
               tickFormatter={(val) =>
                 new Date(val).toLocaleDateString('en-US', {
                   month: 'short',
