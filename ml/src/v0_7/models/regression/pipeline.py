@@ -70,7 +70,7 @@ class SentimentRegressionPipeline:
         )
 
         self.X = np.vstack([pos_train_embs, neg_train_embs])
-        self.y = np.array([0] * len(pos_train_embs) + [1] * len(neg_train_embs))
+        self.y = np.array([1] * len(pos_train_embs) + [0] * len(neg_train_embs))
 
     def train(self, max_iter: int = 1000):
         if self.X is None or self.y is None:
@@ -92,11 +92,11 @@ class SentimentRegressionPipeline:
         pos_preds = self.clf.predict(pos_test_embs)
         neg_preds = self.clf.predict(neg_test_embs)
 
-        y_true = [0] * len(pos_preds) + [1] * len(neg_preds)
+        y_true = [1] * len(pos_preds) + [0] * len(neg_preds)
         y_pred = list(pos_preds) + list(neg_preds)
 
-        neg_correct = sum(p == 1 for p in neg_preds)
-        pos_correct = sum(p == 0 for p in pos_preds)
+        neg_correct = sum(p == 0 for p in neg_preds)
+        pos_correct = sum(p == 1 for p in pos_preds)
         macro_f1 = float(f1_score(y_true, y_pred, average="macro"))
 
         rprint(
@@ -111,7 +111,7 @@ class SentimentRegressionPipeline:
 
         rprint("Failing positive test signals:")
         for sig, pred in zip(self.split.pos_test, pos_preds, strict=True):
-            if pred == 1:
+            if pred == 0:
                 rprint(f"- [red]{sig}[/red] ")
 
     def save(self, export_path: Path | None = None):
@@ -148,5 +148,5 @@ if __name__ == "__main__":
     # pipeline.eval()
     # pipeline.save()
 
-    pipeline.load_model(model_path=ARTEFACTS_DIR / "20260315_024827_model.pkl")
+    pipeline.load_model(model_path=ARTEFACTS_DIR / "20260315_031701_model.pkl")
     rprint(pipeline.score("Test"))
