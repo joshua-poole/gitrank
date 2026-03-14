@@ -32,6 +32,8 @@ DIVISION_COLOURS = [
     "bold magenta",
 ]
 
+SUB_DIVISIONS = [(0.33, "III"), (0.66, "II"), (1.0, "I")]
+
 step = MAX_MMR / len(DIVISION_NAMES)
 DIVISIONS = {
     name: (int(i * step), int((i + 1) * step), colour)
@@ -75,15 +77,9 @@ def get_division(mmr: float) -> tuple[str, str]:
     for division, (low, high, colour) in DIVISIONS.items():
         if low <= mmr < high:
             segment = (mmr - low) / (high - low)
-            if segment < 0.33:
-                sub = "III"
-            elif segment < 0.66:
-                sub = "II"
-            else:
-                sub = "I"
+            sub = next(s for threshold, s in SUB_DIVISIONS if segment < threshold)
             return f"{division} {sub}", colour
     return f"{DIVISION_NAMES[-1]} I", DIVISION_COLOURS[-1]
-
 
 
 def rprint_division(user: str, mmr: float) -> None:
