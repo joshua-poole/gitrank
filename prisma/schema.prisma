@@ -24,16 +24,23 @@ enum Rank {
 }
 
 model User {
-  id                  BigInt @id @default(autoincrement())
-  username            String @unique
+  id                  BigInt   @id @default(autoincrement())
+  username            String   @unique
   rank                Rank
   elo                 BigInt
   placementCompleted  Boolean
+  publicRepos         Int      @default(0)
+  totalStars          Int      @default(0)
+  totalForks          Int      @default(0)
+  topLanguage         String?
+  location            String?
+  company             String?
+  website             String?
+  accountCreatedAt    DateTime?
   leaderboard         Leaderboard[]
   badges              UserBadges[]
   createdAt           DateTime @default(now())
   lastUpdated         DateTime @updatedAt
-
   @@index([elo])
   @@index([rank])
 }
