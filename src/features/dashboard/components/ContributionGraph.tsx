@@ -31,11 +31,9 @@ export function ContributionGraph({ username }: ContributionGraphProps) {
   if (!data) return null
 
   return (
-    <Card className="border-[var(--line)] bg-[var(--surface)]">
+    <Card className="border-[var(--line)]]">
       <CardHeader className="pb-2">
-        <CardTitle className="text-sm text-[var(--sea-ink-soft)]">
-          Contributions — last 90 days
-        </CardTitle>
+        <CardTitle className="text-sm]">Contributions — last 90 days</CardTitle>
       </CardHeader>
       <CardContent>
         <ChartContainer config={chartConfig} className="h-40 w-full">

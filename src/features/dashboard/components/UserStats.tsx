@@ -9,14 +9,14 @@ interface UserStatsProps {
 
 function StatCard({ label, value }: { label: string; value: string | number }) {
   return (
-    <Card className="border-[var(--line)] bg-[var(--surface)]">
+    <Card className="border-[var(--line)]">
       <CardHeader className="pb-1 pt-3 px-4">
-        <CardTitle className="text-xs text-[var(--sea-ink-soft)] font-medium uppercase tracking-wide">
+        <CardTitle className="text-xs font-medium uppercase tracking-wide">
           {label}
         </CardTitle>
       </CardHeader>
       <CardContent className="px-4 pb-3">
-        <span className="text-xl font-bold text-[var(--sea-ink)]">{value}</span>
+        <span className="text-xl font-bold">{value}</span>
       </CardContent>
     </Card>
   )
@@ -42,14 +42,12 @@ export function UserStats({ username }: UserStatsProps) {
       </div>
 
       {(data.bio || data.location || data.company || data.website) && (
-        <Card className="border-[var(--line)] bg-[var(--surface)]">
+        <Card className="border-[var(--line)]]">
           <CardHeader className="pb-2">
-            <CardTitle className="text-sm text-[var(--sea-ink-soft)]">
-              About
-            </CardTitle>
+            <CardTitle className="text-sm">About</CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="flex flex-wrap gap-x-6 gap-y-1 text-sm text-[var(--sea-ink)]">
+            <div className="flex flex-wrap gap-x-6 gap-y-1 text-sm">
               {data.accountCreatedAt && (
                 <p>
                   🗓️ Member Since{' '}
