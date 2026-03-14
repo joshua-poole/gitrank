@@ -1,7 +1,7 @@
 import { CalendarDotsIcon, GlobeIcon, GitCommitIcon } from '@phosphor-icons/react'
 import { Card, CardContent } from './ui/card'
 import { Separator } from './ui/separator'
-import { Fragment } from 'react/jsx-runtime'
+import { Item } from './ui/item'
 
 export function SeasonStats() {
   // TODO: Change to API call
@@ -25,16 +25,16 @@ export function SeasonStats() {
 
   return (
     <Card className="w-full sm:max-w-3/4 md:max-w-1/2">
-      <CardContent className="w-full flex flex-row justify-around">
+      <CardContent className="w-full flex flex-row justify-around gap-2.5">
         {seasonStats.map((stat, index) => (
-          <Fragment key={stat.title}>
+          <Item className="flex flex-1 items-center justify-center" variant="muted"  key={stat.title}>
             <div
               className="flex flex-row items-center justify-center gap-1"
             >
               <stat.Icon className="size-10" />
               <div className="flex flex-col gap-0">
                 <h2 className="text-xs font-light">{stat.title}</h2>
-                <p className="text-base font-semibold">{stat.value}</p>
+                <p className="text-base text-primary font-semibold">{stat.value}</p>
               </div>
             </div>
             {index < seasonStats.length - 1 && (
@@ -43,7 +43,7 @@ export function SeasonStats() {
                 className="h-10 mx-2"
               />
             )}
-          </Fragment>
+          </Item>
         ))}
       </CardContent>
     </Card>
