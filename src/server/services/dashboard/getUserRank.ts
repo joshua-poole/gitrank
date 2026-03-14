@@ -14,5 +14,5 @@ export interface UserRank {
 }
 
 export async function getUserRank(username: string): Promise<UserRank> {
-  return { rank: Rank.UNRANKED }
+  return { rank: Rank.GOLD }
 }

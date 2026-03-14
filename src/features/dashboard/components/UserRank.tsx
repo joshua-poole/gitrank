@@ -37,37 +37,32 @@ export function UserRank({ username }: UserRankProps) {
 
   if (isLoading)
     return (
-      <Card className="border-[var(--line)] bg-[var(--surface)]">
-        <CardContent className="flex items-center gap-4 py-4">
-          <div className="w-16 h-16 rounded-full bg-[var(--line)] animate-pulse" />
-          <div className="h-6 w-24 rounded bg-[var(--line)] animate-pulse" />
-        </CardContent>
-      </Card>
+      <div className="flex flex-col items-center gap-2">
+        <div className="w-20 h-20 rounded-full bg-[var(--line)] animate-pulse" />
+        <div className="h-4 w-16 rounded bg-[var(--line)] animate-pulse" />
+      </div>
     )
 
-  if (isError)
-    return <p className="text-sm text-destructive">Failed to load rank.</p>
+  if (isError) return null
   if (!data) return null
 
   const rank = data.rank as Rank
 
   return (
-    <Card className="border-[var(--line)] bg-[var(--surface)]">
-      <CardContent className="flex items-center gap-4 py-4">
-        <img
-          src={RANK_IMAGE[rank]}
-          alt={RANK_LABELS[rank]}
-          className="w-16 h-16 object-contain"
-        />
-        <div>
-          <p className="text-xs text-[var(--sea-ink-soft)] uppercase tracking-wide font-medium">
-            Rank
-          </p>
-          <p className="text-2xl font-bold text-[var(--sea-ink)]">
-            {RANK_LABELS[rank]}
-          </p>
-        </div>
-      </CardContent>
-    </Card>
+    <div className="flex items-center gap-3">
+      <img
+        src={RANK_IMAGE[rank]}
+        alt={RANK_LABELS[rank]}
+        className="w-20 h-20 object-contain"
+      />
+      <div className="flex flex-col">
+        <p className="text-xs text-[var(--sea-ink-soft)] uppercase tracking-wide font-medium">
+          Rank
+        </p>
+        <p className="text-2xl font-bold text-[var(--sea-ink)]">
+          {RANK_LABELS[rank]}
+        </p>
+      </div>
+    </div>
   )
 }
