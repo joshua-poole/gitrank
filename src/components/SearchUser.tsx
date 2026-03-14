@@ -71,9 +71,11 @@ export function SearchUser() {
           children={(field) => {
             const isInvalid =
               field.state.meta.isTouched && !field.state.meta.isValid
-
             return (
-              <Field data-invalid={isInvalid}>
+              <Field
+                data-invalid={isInvalid || notFound}
+                className="relative mb-2"
+              >
                 <FieldLabel htmlFor={field.name}>Search</FieldLabel>
                 <Input
                   className="text-sm h-10"
@@ -85,12 +87,21 @@ export function SearchUser() {
                   placeholder="Github username"
                   autoComplete="off"
                 />
+                {notFound && (
+                  <p className="absolute -bottom-5 left-0 text-xs text-red-500">
+                    Github User Not Found
+                  </p>
+                )}
               </Field>
             )
           }}
         />
       </FieldGroup>
-      <Button type="submit" form="search-user-form" className="text-sm h-10">
+      <Button
+        type="submit"
+        form="search-user-form"
+        className="text-sm h-10 mb-2"
+      >
         Search
       </Button>
     </form>
