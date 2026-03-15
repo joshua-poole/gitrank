@@ -150,3 +150,4 @@ if __name__ == "__main__":
 
     pipeline.load_model(model_path=ARTEFACTS_DIR / "20260315_031701_model.pkl")
     rprint(pipeline.score("Test"))
+    rprint(pipeline.score("feat: Updated README.md"))
