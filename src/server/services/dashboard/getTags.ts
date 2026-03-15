@@ -38,27 +38,42 @@ function mapScoresToTags(scores: ScoreResponse): Tag[] {
   return [qualityTag, frequencyTag, consistencyTag]
 }
 
+const DEFAULT_SCORES: ScoreResponse = {
+  commit_score: 0.5,
+  commit_frequency: 0.5,
+  commit_consistency: 0.5,
+}
+
 export async function getTags(username: string): Promise<TagsWithScores> {
-  const toISONoMs = (date: Date) =>
-    date.toISOString().replace(/\.\d{3}Z$/, 'Z')
-
-  const since = toISONoMs(new Date(Date.now() - 90 * 24 * 60 * 60 * 1000))
-  const until = toISONoMs(new Date())
-
-  const url = new URL(`${process.env.ML_SERVICE_URL}/commits/score`)
-  url.searchParams.set('user', username)
-  url.searchParams.set('since', since)
-  url.searchParams.set('until', until)
-
-  const response = await fetch(url.toString())
-  if (!response.ok) {
-    throw new Error(`ML backend error: ${response.status}`)
+  if (!process.env.ML_SERVICE_URL) {
+    return { tags: mapScoresToTags(DEFAULT_SCORES), scores: DEFAULT_SCORES }
   }
 
-  const scores: ScoreResponse = await response.json()
+  try {
+    const toISONoMs = (date: Date) =>
+      date.toISOString().replace(/\.\d{3}Z$/, 'Z')
 
-  return {
-    tags: mapScoresToTags(scores),
-    scores,
+    const since = toISONoMs(new Date(Date.now() - 90 * 24 * 60 * 60 * 1000))
+    const until = toISONoMs(new Date())
+
+    const url = new URL(`${process.env.ML_SERVICE_URL}/commits/score`)
+    url.searchParams.set('user', username)
+    url.searchParams.set('since', since)
+    url.searchParams.set('until', until)
+
+    const response = await fetch(url.toString(), {
+      signal: AbortSignal.timeout(15_000),
+    })
+
+    if (!response.ok) {
+      console.error(`[getTags] ML backend error: ${response.status}`)
+      return { tags: mapScoresToTags(DEFAULT_SCORES), scores: DEFAULT_SCORES }
+    }
+
+    const scores: ScoreResponse = await response.json()
+    return { tags: mapScoresToTags(scores), scores }
+  } catch (err) {
+    console.error('[getTags] ML service unavailable:', err)
+    return { tags: mapScoresToTags(DEFAULT_SCORES), scores: DEFAULT_SCORES }
   }
 }
