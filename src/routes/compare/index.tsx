@@ -9,7 +9,6 @@ export const Route = createFileRoute('/compare/')({
 })
 
 function RouteComponent() {
-  const [showCompare, setShowCompare] = useState(false)
   const [user1, setUser1] = useState('')
   const [user2, setUser2] = useState('')
   const [trigger, setTrigger] = useState(0)
@@ -24,13 +23,13 @@ function RouteComponent() {
       </div>
       <Button
         onClick={() => {
-          setShowCompare(true)
+          console.log('clicked', { user1, user2, trigger })
           setTrigger((t) => t + 1)
         }}
       >
         Compare
       </Button>
-      {showCompare && <Compare user1={user1} user2={user2} trigger={trigger} />}
+      <Compare user1={user1} user2={user2} trigger={trigger} />
     </main>
   )
 }

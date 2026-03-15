@@ -20,7 +20,7 @@ export default function Compare({
 }) {
   const trpc = useTRPC()
 
-  const { data } = useQuery({
+  const { data, isLoading, error } = useQuery({
     ...trpc.user.compareUsers.queryOptions({
       username1: user1,
       username2: user2,
@@ -28,10 +28,11 @@ export default function Compare({
     enabled: trigger > 0 && !!user1 && !!user2,
   })
 
+  console.log({ data, isLoading, error })
   if (!data) return null
 
   const users = [data.user1, data.user2]
-
+  console.log(users)
   return (
     <main className="flex flex-row gap-2">
       {users.map((user) => (
@@ -51,7 +52,7 @@ export default function Compare({
             <hr className="my-2" />
             <div className="flex justify-between items-center py-1">
               <span>Commits</span>
-              <span>{user.totalCommits}</span>
+              <span>{user.commits}</span>
             </div>
             <hr className="my-2" />
             <div className="flex justify-between items-center py-1">

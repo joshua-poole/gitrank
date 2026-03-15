@@ -1,0 +1,31 @@
+line-length = 88
+include = ["src/v0_7/**/*.py"]
+
+[lint]
+select = [
+    "B",    # flake8-bugbear
+    "SIM",  # flake8-simplify
+    "I",    # isort
+    "PD",   # pandas-vet
+    "E",    # pycodestyle
+    "W",
+    "D",    # pydocstyle
+    "F",    # Pyflakes
+    "PL",   # Pylint
+    "UP",   # pyupgrade
+]
+ignore = [
+    "D100",     # Missing docstring in public module
+    "D101",     # Missing docstring in public class
+    "D102",     # Missing docstring in public method
+    "D103",     # Missing docstring in public function
+    "D104",     # Missing docstring in public package
+    "D105",     # Missing docstring in magic method
+    "D107",     # Missing docstring in `__init__`
+    "D205",     # 1 blank line required between summary line and description
+    "PLR0913",  # Too many arguments in function definition (6 > 5)
+    "PD013",    # `.melt` is preferred to `.stack`; provides same functionality
+]
+
+[lint.pydocstyle]
+convention = "google"

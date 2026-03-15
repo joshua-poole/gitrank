@@ -16,11 +16,11 @@
     "check": "prettier --write . && eslint --fix",
     "deploy": "pnpm run build && wrangler deploy",
     "post-cta-init": "pnpm dlx create-db@latest --user-agent tanstack/tsrouter",
-    "db:generate": "prisma generate",
-    "db:push": "prisma db push",
-    "db:migrate": "prisma migrate dev",
-    "db:studio": "prisma studio",
-    "db:seed": "prisma db seed"
+    "db:generate": "dotenv -e .env -- prisma generate",
+    "db:push": "dotenv -e .env -- prisma db push",
+    "db:migrate": "dotenv -e .env -- prisma migrate dev",
+    "db:studio": "dotenv -e .env -- prisma studio",
+    "db:seed": "dotenv -e .env -- prisma db seed"
   },
   "dependencies": {
     "@fontsource-variable/jetbrains-mono": "^5.2.8",
@@ -72,6 +72,7 @@
     "@types/react-dom": "^19.2.0",
     "@vitejs/plugin-react": "^5.1.4",
     "babel-plugin-react-compiler": "^1.0.0",
+    "dotenv": "^17.3.1",
     "dotenv-cli": "^11.0.0",
     "jsdom": "^28.1.0",
     "prettier": "^3.8.1",
