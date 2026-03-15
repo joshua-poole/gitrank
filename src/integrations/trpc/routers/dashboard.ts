@@ -6,6 +6,7 @@ import { getUserStats } from '#/server/services/dashboard/getUserStats'
 import { getContributions } from '#/server/services/dashboard/getContributions'
 import { getUserRank } from '#/server/services/dashboard/getUserRank'
 import { searchUser } from '#/server/services/dashboard/searchUser'
+import { rankUser } from '#/server/services/scoring/rankUser'
 
 export const dashboardRouter = createTRPCRouter({
   searchUser: publicProcedure
@@ -40,5 +41,11 @@ export const dashboardRouter = createTRPCRouter({
     .input(z.object({ username: z.string().min(1) }))
     .query(async ({ input }) => {
       return getUserRank(input.username)
+    }),
+
+  rankUser: publicProcedure
+    .input(z.object({ username: z.string().min(1) }))
+    .mutation(async ({ input }) => {
+      return rankUser(input.username)
     }),
 })

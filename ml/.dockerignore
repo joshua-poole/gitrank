@@ -1,0 +1,11 @@
+.venv/
+__pycache__/
+*.pyc
+.ruff_cache/
+.env
+.envrc
+scoring/
+src/data/
+*.egg-info/
+build/
+dist/

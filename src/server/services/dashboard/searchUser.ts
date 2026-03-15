@@ -1,5 +1,6 @@
 import { prisma } from '#/db'
 import { TRPCError } from '@trpc/server'
+import { rankUser } from '#/server/services/scoring/rankUser'
 
 function githubHeaders() {
   return {
@@ -131,6 +132,11 @@ export async function searchUser(username: string): Promise<{ login: string }> {
       message: 'Failed to save user data',
     })
   }
+
+  // Score and rank the user in the background (don't block the response)
+  rankUser(ghUser.login).catch((err) =>
+    console.error(`[searchUser] Failed to rank ${ghUser.login}:`, err),
+  )
 
   return { login: ghUser.login as string }
 }
