@@ -96,7 +96,10 @@ def get_user_commits(username: str, since: datetime, until: datetime) -> pd.Data
         if commits:
             results_list.append(
                 pd.DataFrame(commits)
-                .assign(repo=repo, date=lambda x: pd.to_datetime(x["committedDate"]))
+                .assign(
+                    repo=repo,
+                    date=lambda x: pd.to_datetime(x["committedDate"], utc=True),
+                )
                 .drop(columns=["committedDate"])
             )
 

@@ -47,6 +47,7 @@ if __name__ == "__main__":
     pipeline.load_model(model_path=ARTEFACTS_DIR / "20260315_031701_model.pkl")
 
     users = [
+        "hello-andrew-yan",
         "joshua-poole",
         "NathanTheDev",
         "imareeq",
