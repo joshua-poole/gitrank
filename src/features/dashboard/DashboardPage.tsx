@@ -4,6 +4,7 @@ import { UserStats } from './components/UserStats'
 import { ContributionGraph } from './components/ContributionGraph'
 import { Separator } from '#/components/ui/separator'
 import { UserRank } from './components/UserRank'
+import { UserTags } from './components/UserTags'
 
 export function DashboardPage() {
   const { username } = useParams({ from: '/dashboard/$username' })
@@ -23,6 +24,8 @@ export function DashboardPage() {
       </div>
       <Separator />
       <UserStats username={username} />
+      <Separator />
+      <UserTags username={username} />
       <Separator />
       <ContributionGraph username={username} />
     </div>
