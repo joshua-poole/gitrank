@@ -9,12 +9,12 @@ WORKDIR /app
 COPY --from=ghcr.io/astral-sh/uv:latest /uv /uvx /usr/local/bin/
 
 # Install dependencies
-COPY app/pyproject.toml app/uv.lock ./
+COPY pyproject.toml uv.lock ./
 RUN uv sync --frozen --no-dev --no-install-project
 
 # Copy source and artefacts
-COPY app/src/ src/
-COPY app/artefacts/ artefacts/
+COPY src/ src/
+COPY artefacts/ artefacts/
 
 # Clean all caches to shrink the image
 RUN rm -rf /tmp/uv-cache \
@@ -39,4 +39,4 @@ ENV PATH="/app/.venv/bin:$PATH"
 
 EXPOSE 8000
 
-CMD ["python", "-m", "uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8000", "--app-dir", "src"]
+CMD ["python", "-m", "uvicorn", "v0_7.main:app", "--host", "0.0.0.0", "--port", "8000"]
