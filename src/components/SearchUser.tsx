@@ -76,7 +76,7 @@ export function SearchUser() {
                 data-invalid={isInvalid}
                 className="relative mb-2"
               >
-                <FieldLabel htmlFor={field.name}>Search</FieldLabel>
+                <FieldLabel className='pt-5' htmlFor={field.name}>Search</FieldLabel>
                 <Input
                   className="text-sm h-10"
                   id={field.name}

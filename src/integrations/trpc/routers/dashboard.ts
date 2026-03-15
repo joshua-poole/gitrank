@@ -1,6 +1,5 @@
 import { z } from 'zod'
 import { createTRPCRouter, publicProcedure } from '@/integrations/trpc/init'
-import { TRPCError } from '@trpc/server'
 import { getUserIcon } from '#/server/services/dashboard/getUserIcon'
 import { getUserStats } from '#/server/services/dashboard/getUserStats'
 import { getContributions } from '#/server/services/dashboard/getContributions'
