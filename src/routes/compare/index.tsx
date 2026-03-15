@@ -8,23 +8,21 @@ export const Route = createFileRoute('/compare/')({
   component: RouteComponent,
 })
 
-function RouteComponent() { 
+function RouteComponent() {
+  const [showCompare, setShowCompare] = useState(false)
+  const [user1, setUser1] = useState('')
+  const [user2, setUser2] = useState('')
 
-    const [showCompare, setShowCompare] = useState(false)
-    
-
-
-    return (
-        <main className="flex flex-col items-center gap-4 page-wrap py-12">
-            <h1>Side-by-Side Comparison of two users </h1>
-            <div className="flex flex-row gap-4 ">
-                <Input /> 
-                    vs 
-                <Input />
-            </div>
-            <Button onClick={() => setShowCompare(true)}>Compare</Button>
-            {showCompare && <Compare />}
-        </main>
-    )
+  return (
+    <main className="flex flex-col items-center gap-4 page-wrap py-12">
+      <h1>Side-by-Side Comparison of two users </h1>
+      <div className="flex flex-row gap-4 ">
+        <Input onChange={(e) => setUser1(e.target.value)} />
+        vs
+        <Input onChange={(e) => setUser2(e.target.value)} />
+      </div>
+      <Button onClick={() => setShowCompare(true)}>Compare</Button>
+      {showCompare && <Compare user1={user1} user2={user2} />}
+    </main>
+  )
 }
-
