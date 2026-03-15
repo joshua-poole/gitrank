@@ -1,7 +1,6 @@
 import { useEffect, useState } from 'react'
 import { Button } from './ui/button'
-
-import { CloudMoonIcon, DesktopIcon, SunIcon } from '@phosphor-icons/react'
+import { CloudMoon, MonitorCog, Sun } from 'lucide-react'
 
 type ThemeMode = 'light' | 'dark' | 'auto'
 
@@ -73,11 +72,11 @@ export default function ThemeToggle() {
   return (
     <Button onClick={toggleMode} variant="outline" aria-label={label} title={label} className='rounded-full aspect-square h-full'>
       {mode === 'auto' ? (
-        <DesktopIcon />
+        <MonitorCog />
       ) : mode === 'dark' ? (
-        <CloudMoonIcon />
+        <CloudMoon />
       ) : (
-        <SunIcon />
+        <Sun />
       )}
     </Button>
   )

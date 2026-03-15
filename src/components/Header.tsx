@@ -16,9 +16,9 @@ const navItems = [
 
 export default function Header() {
   return (
-    <header className="w-full flex flex-row bg-secondary items-center justify-between p-5">
+    <header className="w-full flex flex-row items-center justify-between p-5">
       <NavigationMenu className="gap-5">
-        <Link to="/"><h1 className="font-bold text-lg">GITRANK.XYZ</h1></Link>
+        <Link to="/"><img src='/gitrank-logo.svg' className='size-17.5 ml-5'/></Link>
         <NavigationMenuList>
           {navItems.map((el) => (
             <NavigationMenuItem key={el.label}>
