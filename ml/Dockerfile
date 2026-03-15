@@ -9,14 +9,12 @@ WORKDIR /app
 COPY --from=ghcr.io/astral-sh/uv:latest /uv /uvx /usr/local/bin/
 
 # Install dependencies
-COPY pyproject.toml uv.lock ./
+COPY app/pyproject.toml app/uv.lock ./
 RUN uv sync --frozen --no-dev --no-install-project
 
-# Copy source and pre-warm the ONNX model export
-COPY src/ src/
-RUN uv run --directory src python -c "\
-from v0_7.models.regression.data import _model, _tokenizer; \
-print('ONNX model ready')"
+# Copy source and artefacts
+COPY app/src/ src/
+COPY app/artefacts/ artefacts/
 
 # Clean all caches to shrink the image
 RUN rm -rf /tmp/uv-cache \
@@ -32,12 +30,13 @@ ENV PYTHONDONTWRITEBYTECODE=1 \
 
 WORKDIR /app
 
-# Copy only the venv and source from the builder
+# Copy only the venv, source, and artefacts from the builder
 COPY --from=builder /app/.venv /app/.venv
 COPY --from=builder /app/src /app/src
+COPY --from=builder /app/artefacts /app/artefacts
 
 ENV PATH="/app/.venv/bin:$PATH"
 
 EXPOSE 8000
 
-CMD ["python", "-m", "uvicorn", "v0_7.main:app", "--host", "0.0.0.0", "--port", "8000", "--app-dir", "src"]
+CMD ["python", "-m", "uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8000", "--app-dir", "src"]
