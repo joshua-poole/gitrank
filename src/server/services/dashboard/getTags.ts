@@ -9,6 +9,11 @@ interface ScoreResponse {
   commit_consistency: number
 }
 
+interface TagsWithScores {
+  tags: Tag[]
+  scores: ScoreResponse
+}
+
 function mapScoresToTags(scores: ScoreResponse): Tag[] {
   const { commit_score, commit_frequency, commit_consistency } = scores
 
@@ -33,7 +38,7 @@ function mapScoresToTags(scores: ScoreResponse): Tag[] {
   return [qualityTag, frequencyTag, consistencyTag]
 }
 
-export async function getTags(username: string): Promise<Tag[]> {
+export async function getTags(username: string): Promise<TagsWithScores> {
   const toISONoMs = (date: Date) =>
     date.toISOString().replace(/\.\d{3}Z$/, 'Z')
 
@@ -46,11 +51,14 @@ export async function getTags(username: string): Promise<Tag[]> {
   url.searchParams.set('until', until)
 
   const response = await fetch(url.toString())
-
   if (!response.ok) {
     throw new Error(`ML backend error: ${response.status}`)
   }
 
   const scores: ScoreResponse = await response.json()
-  return mapScoresToTags(scores)
+
+  return {
+    tags: mapScoresToTags(scores),
+    scores,
+  }
 }

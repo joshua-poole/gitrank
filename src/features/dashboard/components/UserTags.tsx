@@ -1,6 +1,9 @@
 import { useQuery } from '@tanstack/react-query'
 import { useTRPC } from '#/integrations/trpc/react'
 import { Card, CardContent, CardHeader, CardTitle } from '#/components/ui/card'
+import {
+  Radar, RadarChart, PolarGrid, PolarAngleAxis, ResponsiveContainer,
+} from 'recharts'
 
 interface UserTagsProps {
   username: string
@@ -25,25 +28,60 @@ export function UserTags({ username }: UserTagsProps) {
 
   if (isLoading) return <div>Loading tags...</div>
   if (isError) return <div>Failed to load tags.</div>
-  if (!data || data.length === 0) return null
+  if (!data) return null
+
+  const { tags, scores } = data
+
+  if (!tags || tags.length === 0) return null
+
+  const chartData = [
+    { subject: 'Quality', value: scores.commit_score },
+    { subject: 'Frequency', value: scores.commit_frequency },
+    { subject: 'Consistency', value: scores.commit_consistency },
+  ]
 
   return (
-    <Card className="border-[var(--line)]">
-      <CardHeader className="pb-2 pt-3 px-4">
-        <CardTitle className="text-sm">Tags</CardTitle>
-      </CardHeader>
-      <CardContent className="px-4 pb-3">
-        <div className="flex flex-wrap gap-2">
-          {data.map((tag: Tag, index: number) => (
-            <span
-              key={index}
-              className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${colorStyles[tag.color]}`}
-            >
-              {tag.name}
-            </span>
-          ))}
-        </div>
-      </CardContent>
-    </Card>
+    <div className="flex gap-4">
+      <Card className="border-[var(--line)] flex-1">
+        <CardHeader className="pb-2 pt-3 px-4">
+          <CardTitle className="text-sm">Tags</CardTitle>
+        </CardHeader>
+        <CardContent className="px-4 pb-0">
+          <div className="flex flex-wrap gap-2">
+            {tags.map((tag: Tag, index: number) => (
+              <span
+                key={index}
+                className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${colorStyles[tag.color]}`}
+              >
+                {tag.name}
+              </span>
+            ))}
+          </div>
+        </CardContent>
+      </Card>
+
+      <Card className="border-[var(--line)] flex-1">
+        <CardHeader className="pb-2 pt-3 px-4">
+          <CardTitle className="text-sm">Scores</CardTitle>
+        </CardHeader>
+        <CardContent className="px-4 !pb-0">
+          <div className="h-40">
+            <ResponsiveContainer width="100%" height="100%">
+              <RadarChart data={chartData} outerRadius="80%">
+                <PolarGrid />
+                <PolarAngleAxis dataKey="subject" tick={{ fontSize: 11 }} />
+                <Radar
+                  dataKey="value"
+                  fill="var(--primary)"
+                  fillOpacity={0.25}
+                  stroke="var(--primary)"
+                  strokeWidth={2}
+                />
+              </RadarChart>
+            </ResponsiveContainer>
+          </div>
+        </CardContent>
+      </Card>
+    </div>
   )
 }
