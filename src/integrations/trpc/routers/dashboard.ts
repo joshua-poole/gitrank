@@ -6,6 +6,8 @@ import { getContributions } from '#/server/services/dashboard/getContributions'
 import { getUserRank } from '#/server/services/dashboard/getUserRank'
 import { searchUser } from '#/server/services/dashboard/searchUser'
 import { getTags } from '#/server/services/dashboard/getTags'
+import { getCommitMessages } from '#/server/services/dashboard/getCommitMessages'
+import { extractWords } from '#/lib/utils'
 
 export const dashboardRouter = createTRPCRouter({
   searchUser: publicProcedure
@@ -34,6 +36,13 @@ export const dashboardRouter = createTRPCRouter({
     .query(async ({ input }) => {
       const contributions = await getContributions(input.username)
       return contributions
+    }),
+
+  getCommitMessages: publicProcedure
+    .input(z.object({ username: z.string().min(1) }))
+    .query(async ({ input }) => {
+      const messages = await getCommitMessages(input.username)
+      return extractWords(messages)
     }),
 
   getUserRank: publicProcedure
