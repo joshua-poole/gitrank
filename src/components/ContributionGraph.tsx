@@ -31,11 +31,11 @@ export function ContributionGraph({ username }: ContributionGraphProps) {
   if (!data) return null
 
   return (
-    <Card className="border-[var(--line)]]">
+    <Card className="border-[var(--line)]] flex-1">
       <CardHeader className="pb-2">
         <CardTitle className="text-sm">Contributions — last 90 days</CardTitle>
       </CardHeader>
-      <CardContent>
+      <CardContent className="flex flex-col justify-end h-full">
         <ChartContainer config={chartConfig} className="h-40 w-full">
           <AreaChart
             data={data}
