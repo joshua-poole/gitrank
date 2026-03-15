@@ -1,3 +1,6 @@
+import { prisma } from '#/db'
+import { TRPCError } from '@trpc/server'
+
 export enum Rank {
   UNRANKED = 'UNRANKED',
   PLASTIC = 'PLASTIC',
@@ -10,10 +13,23 @@ export enum Rank {
 }
 
 export interface UserRank {
-  rank: Rank,
+  rank: Rank
+  elo: number
 }
 
 export async function getUserRank(username: string): Promise<UserRank> {
-  return { rank: Rank.DIAMOND }
+  const user = await prisma.user.findUnique({
+    where: { username },
+    select: { rank: true, elo: true },
+  })
+
+  if (!user) {
+    throw new TRPCError({
+      code: 'NOT_FOUND',
+      message: `User "${username}" not found`,
+    })
+  }
+
+  return { rank: user.rank as Rank, elo: Number(user.elo) }
 }
 

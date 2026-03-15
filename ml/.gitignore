@@ -3,7 +3,7 @@ src/data/*
 !src/data/.gitkeep
 
 src/artefacts/*
-!src/artefacts/regression.pkl
+!src/artefacts/latest.pkl
 !src/artefacts/.gitkeep
 
 # Byte-compiled / optimized / DLL files
