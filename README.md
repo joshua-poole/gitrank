@@ -37,8 +37,9 @@ src/
   components/      # Shared UI components
   types/           # TypeScript types
 ml/
-  scoring/         # Elo scoring algorithm (Python)
-  src/             # ML models and data
+  legacy/          # Heavy package containing all legacy model scripts (CUDA Supported)
+  dev/             # Isolated dev package containing build and train scripts (CPU Only)
+  app/             # Lightweight FastAPI backend using built inferences (CPU Only)
 prisma/
   schema.prisma    # Database schema
   migrations/      # Database migrations
@@ -83,9 +84,14 @@ pnpm db:generate   # Regenerate Prisma client
 ```
 
 ## Python Scoring Service
-
+You can `cd` into any of the three project directories: `legacy`, `app`, or `dev`. Each one is an independent environment, so you need to run `uv sync` separately in each directory.
 ```bash
-cd ml
+cd ml/legacy
 uv sync
-# See ml/scoring/algo.py for the Elo algorithm
+
+cd ../app
+uv sync
+
+cd ../dev
+uv sync
 ```
