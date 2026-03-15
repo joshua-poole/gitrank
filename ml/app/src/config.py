@@ -15,4 +15,4 @@ _TRANSPORT = RequestsHTTPTransport(
     url="https://api.github.com/graphql",
     headers={"Authorization": f"Bearer {_TOKEN}"},
 )
-GRAPHQL_CLIENT = Client(transport=_TRANSPORT, fetch_schema_from_transport=True)
+GRAPHQL_CLIENT = Client(transport=_TRANSPORT, fetch_schema_from_transport=False)
