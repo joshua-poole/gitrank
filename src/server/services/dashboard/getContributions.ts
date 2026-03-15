@@ -1,3 +1,5 @@
+import { githubGraphQL } from "#/lib/utils"
+
 export interface DayContributions {
   date: string
   count: number
@@ -27,44 +29,18 @@ const CONTRIBUTIONS_QUERY = `
   }
 `
 
-
-
-
-export async function getContributions(
-  username: string,
-): Promise<DayContributions[]> {
+export async function getContributions(username: string): Promise<DayContributions[]> {
   const to = new Date()
   const from = new Date()
   from.setDate(to.getDate() - 90)
 
-  const res = await fetch('https://api.github.com/graphql', {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      'User-Agent': 'github-ranked-app',
-      Authorization: `Bearer ${process.env.GITHUB_TOKEN}`,
-    },
-    body: JSON.stringify({
-      query: CONTRIBUTIONS_QUERY,
-      variables: {
-        username,
-        from: from.toISOString(),
-        to: to.toISOString(),
-      },
-    }),
+  const data = await githubGraphQL<any>(CONTRIBUTIONS_QUERY, {
+    username,
+    from: from.toISOString(),
+    to: to.toISOString(),
   })
 
-  if (!res.ok) throw new Error(`GitHub GraphQL error: ${res.status}`)
-
-  const json = await res.json()
-
-  if (json.errors) {
-    throw new Error(`GitHub GraphQL error: ${json.errors[0]?.message}`)
-  }
-
-  const weeks =
-    json.data?.user?.contributionsCollection?.contributionCalendar?.weeks ?? []
-
+  const weeks = data?.user?.contributionsCollection?.contributionCalendar?.weeks ?? []
   return weeks.flatMap((week: any) =>
     week.contributionDays.map((day: any) => ({
       date: day.date,

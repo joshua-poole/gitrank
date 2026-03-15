@@ -18,10 +18,6 @@ import { Card, CardContent } from './ui/card'
 import { cn } from '#/lib/utils'
 import { Link } from '@tanstack/react-router'
 
-interface DataTableProps<TData, TValue> {
-  columns: ColumnDef<TData, TValue>[]
-  data: TData[]
-}
 
 const columns: ColumnDef<LeaderboardColumn>[] = [
   {
