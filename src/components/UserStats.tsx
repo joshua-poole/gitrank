@@ -1,15 +1,29 @@
 import { useQuery } from '@tanstack/react-query'
 import { useTRPC } from '#/integrations/trpc/react'
-import type { UserStats } from '../types'
 import { Card, CardContent, CardHeader, CardTitle } from '#/components/ui/card'
 
 interface UserStatsProps {
   username: string
 }
 
+export interface UserStats {
+  followers: number
+  following: number
+  publicRepos: number
+  accountCreatedAt: string
+  bio: string | null
+  location: string | null
+  company: string | null
+  website: string | null
+  totalStars: number
+  totalForks: number
+  topLanguage: string | null
+  mostStarredRepo: { name: string; stars: number } | null
+}
+
 function StatCard({ label, value }: { label: string; value: string | number }) {
   return (
-    <Card className="border-[var(--line)]">
+    <Card className="border-(--line)">
       <CardHeader className="pb-1 pt-3 px-4">
         <CardTitle className="text-xs font-medium uppercase tracking-wide">
           {label}

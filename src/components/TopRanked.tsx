@@ -2,7 +2,7 @@ import { Card, CardContent, CardHeader, CardTitle } from './ui/card'
 import { Button } from './ui/button'
 import { Link } from '@tanstack/react-router'
 import { Separator } from './ui/separator'
-import { ChartBarIcon } from '@phosphor-icons/react'
+import { ChartNoAxesColumnIncreasing } from 'lucide-react'
 
 export function TopRanked() {
   // TODO: Replace with api call
@@ -30,7 +30,7 @@ export function TopRanked() {
         <CardTitle>Top Ranked this Season</CardTitle>
         <Button asChild variant="outline">
           <Link to="/leaderboard">
-            <ChartBarIcon className='size-5 text-foreground' />
+            <ChartNoAxesColumnIncreasing className='size-5 text-foreground' />
           </Link>
         </Button>
       </CardHeader>

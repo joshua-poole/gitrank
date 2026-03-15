@@ -10,7 +10,7 @@ export enum Rank {
 }
 
 export interface UserRank {
-  rank: Rank
+  rank: Rank,
 }
 
 export async function getUserRank(username: string): Promise<UserRank> {

@@ -15,7 +15,7 @@ const navItems = [
 
 export default function Header() {
   return (
-    <header className="w-full flex flex-row bg-secondary items-center justify-between p-5">
+    <header className="w-full flex flex-row items-center justify-between p-5">
       <NavigationMenu className="gap-5">
         <Link to="/"><h1 className="font-bold text-lg">GITRANK.XYZ</h1></Link>
         <NavigationMenuList>

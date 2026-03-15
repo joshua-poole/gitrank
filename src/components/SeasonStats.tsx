@@ -1,23 +1,23 @@
-import { CalendarDotsIcon, GlobeIcon, GitCommitIcon } from '@phosphor-icons/react'
 import { Card, CardContent } from './ui/card'
 import { Separator } from './ui/separator'
 import { Item } from './ui/item'
+import { CalendarDays, GitCommitHorizontal, Globe } from 'lucide-react'
 
 export function SeasonStats() {
   // TODO: Change to API call
   const seasonStats = [
     {
-      Icon: CalendarDotsIcon,
+      Icon: CalendarDays,
       title: 'Season Ends',
       value: '25d 02h',
     },
     {
-      Icon: GlobeIcon,
+      Icon: Globe,
       title: 'Tracked Coders',
       value: '1,200',
     },
     {
-      Icon: GitCommitIcon,
+      Icon: GitCommitHorizontal,
       title: 'Commits Analysed',
       value: '4.2M',
     },

@@ -72,11 +72,8 @@ export function SearchUser() {
             const isInvalid =
               field.state.meta.isTouched && !field.state.meta.isValid
             return (
-              <Field
-                data-invalid={isInvalid}
-                className="relative mb-2"
-              >
-                <FieldLabel className='pt-5' htmlFor={field.name}>Search</FieldLabel>
+              <Field data-invalid={isInvalid} className="relative mb-2">
+                <FieldLabel htmlFor={field.name}>Search</FieldLabel>
                 <Input
                   className="text-sm h-10"
                   id={field.name}
