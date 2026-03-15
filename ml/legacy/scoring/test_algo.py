@@ -1,8 +1,8 @@
 # test_realistic.py
 from datetime import datetime, timedelta
 
-from ml.scoring.algo import ELO
-from ml.scoring.types import CommitData
+from .algo import ELO
+from .types import CommitData
 
 now = datetime.now()
 

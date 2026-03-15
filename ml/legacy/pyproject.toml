@@ -9,9 +9,9 @@ requires-python = ">=3.12, <3.14"
 authors = [{ name = "Andrew", email = "hello.andrew.yan@outlook.com" }]
 
 dependencies = [
-  "torch",
+  "optimum[onnxruntime]",
+  "transformers",
   "pandas==3.0.1",
-  "sentence-transformers==5.3.0",
   "faiss-cpu==1.13.2",
   "rich==14.3.3",
   "python-dotenv==1.2.2",
@@ -20,14 +20,4 @@ dependencies = [
   "polars==1.39.0",
   "fastapi==0.135.1",
   "uvicorn[standard]==0.37.0",
-]
-
-[[tool.uv.index]]
-name = "pytorch-cu128"
-url = "https://download.pytorch.org/whl/cu128"
-explicit = true
-
-[tool.uv.sources]
-torch = [
-  { index = "pytorch-cu128" },
 ]

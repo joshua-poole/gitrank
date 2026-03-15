@@ -24,71 +24,76 @@ enum Rank {
 }
 
 model User {
-  id                  BigInt   @id @default(autoincrement())
-  username            String   @unique
-  rank                Rank
-  elo                 BigInt
-  placementCompleted  Boolean
-  publicRepos         Int      @default(0)
-  totalStars          Int      @default(0)
-  totalForks          Int      @default(0)
-  topLanguage         String?
-  location            String?
-  company             String?
-  website             String?
-  accountCreatedAt    DateTime?
-  leaderboard         Leaderboard[]
-  badges              UserBadges[]
-  createdAt           DateTime @default(now())
-  lastUpdated         DateTime @updatedAt
+  id                 BigInt        @id @default(autoincrement())
+  username           String        @unique
+  rank               Rank
+  elo                BigInt
+  placementCompleted Boolean
+  publicRepos        Int           @default(0)
+  totalStars         Int           @default(0)
+  totalForks         Int           @default(0)
+  totalCommits       Int           @default(0)
+  totalPrs           Int           @default(0)
+  topLanguage        String?
+  location           String?
+  company            String?
+  website            String?
+  accountCreatedAt   DateTime?
+  leaderboard        Leaderboard[]
+  badges             UserBadges[]
+  createdAt          DateTime      @default(now())
+  lastUpdated        DateTime      @updatedAt
+
   @@index([elo])
   @@index([rank])
 }
 
 model Leaderboard {
-  userId              BigInt
-  user                User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  position            Int
-  commits             Int
-  issues              Int
-  prs                 Int
-  seasonId            BigInt
-  season              Season   @relation(fields: [seasonId], references: [id], onDelete: Cascade)
+  userId   BigInt
+  user     User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  position Int
+  commits  Int
+  issues   Int
+  prs      Int
+  seasonId BigInt
+  season   Season @relation(fields: [seasonId], references: [id], onDelete: Cascade)
+
   @@id([userId, seasonId])
   @@index([seasonId, position])
 }
 
 model Season {
-  id                  BigInt   @id @default(autoincrement())
-  startDate           DateTime @default(now())
-  endDate             DateTime @default(now())
-  leaderboard         Leaderboard[]       
+  id          BigInt        @id @default(autoincrement())
+  startDate   DateTime      @default(now())
+  endDate     DateTime      @default(now())
+  leaderboard Leaderboard[]
 }
 
 model Badge {
-  id                  BigInt    @id @default(autoincrement())
-  name                String
-  description         String
-  challengeId         BigInt
-  challenge           Challenge  @relation(fields: [challengeId], references: [id], onDelete: Cascade)
-  users               UserBadges[]
+  id          BigInt       @id @default(autoincrement())
+  name        String
+  description String
+  challengeId BigInt
+  challenge   Challenge    @relation(fields: [challengeId], references: [id], onDelete: Cascade)
+  users       UserBadges[]
 
   @@index([challengeId])
 }
 
 model UserBadges {
-  userId              BigInt
-  user                User   @relation(fields: [userId], references: [id], onDelete: Cascade)
-  badgeId             BigInt
-  badge               Badge  @relation(fields: [badgeId], references: [id], onDelete: Cascade)
+  userId  BigInt
+  user    User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  badgeId BigInt
+  badge   Badge  @relation(fields: [badgeId], references: [id], onDelete: Cascade)
+
   @@id([userId, badgeId])
   @@index([badgeId])
 }
 
 model Challenge {
-  id                  BigInt    @id @default(autoincrement())
-  name                String
-  description         String
-  requirements        String
-  badges              Badge[]
+  id           BigInt  @id @default(autoincrement())
+  name         String
+  description  String
+  requirements String
+  badges       Badge[]
 }

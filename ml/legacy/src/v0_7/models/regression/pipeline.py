@@ -6,7 +6,6 @@ from pathlib import Path
 import faiss
 import joblib
 import numpy as np
-import torch
 from rich import print as rprint
 from sklearn.linear_model import LogisticRegression
 from sklearn.metrics import f1_score
@@ -20,7 +19,7 @@ from .data import SplitSignals, encode, load_raw_embs, load_split_signals
 
 
 class SentimentRegressionPipeline:
-    raw_embs: torch.Tensor = None
+    raw_embs: np.ndarray = None
     index: faiss.IndexFlatIP
     split: SplitSignals = None
     X: np.ndarray = None
