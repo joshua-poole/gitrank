@@ -59,7 +59,7 @@ function RootDocument({ children }: { children: React.ReactNode }) {
       <body>
         <TanStackQueryProvider>
           <Header />
-          {children}``
+          {children}
           <Footer />
           <TanStackDevtools
             config={{
