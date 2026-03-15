@@ -11,7 +11,6 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as RankIndexRouteImport } from './routes/rank/index'
-import { Route as LeaderboardIndexRouteImport } from './routes/leaderboard/index'
 import { Route as CompareIndexRouteImport } from './routes/compare/index'
 import { Route as AboutIndexRouteImport } from './routes/about/index'
 import { Route as DashboardUsernameRouteImport } from './routes/dashboard/$username'
@@ -25,11 +24,6 @@ const IndexRoute = IndexRouteImport.update({
 const RankIndexRoute = RankIndexRouteImport.update({
   id: '/rank/',
   path: '/rank/',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const LeaderboardIndexRoute = LeaderboardIndexRouteImport.update({
-  id: '/leaderboard/',
-  path: '/leaderboard/',
   getParentRoute: () => rootRouteImport,
 } as any)
 const CompareIndexRoute = CompareIndexRouteImport.update({
@@ -58,7 +52,6 @@ export interface FileRoutesByFullPath {
   '/dashboard/$username': typeof DashboardUsernameRoute
   '/about/': typeof AboutIndexRoute
   '/compare/': typeof CompareIndexRoute
-  '/leaderboard/': typeof LeaderboardIndexRoute
   '/rank/': typeof RankIndexRoute
   '/api/trpc/$': typeof ApiTrpcSplatRoute
 }
@@ -67,7 +60,6 @@ export interface FileRoutesByTo {
   '/dashboard/$username': typeof DashboardUsernameRoute
   '/about': typeof AboutIndexRoute
   '/compare': typeof CompareIndexRoute
-  '/leaderboard': typeof LeaderboardIndexRoute
   '/rank': typeof RankIndexRoute
   '/api/trpc/$': typeof ApiTrpcSplatRoute
 }
@@ -77,7 +69,6 @@ export interface FileRoutesById {
   '/dashboard/$username': typeof DashboardUsernameRoute
   '/about/': typeof AboutIndexRoute
   '/compare/': typeof CompareIndexRoute
-  '/leaderboard/': typeof LeaderboardIndexRoute
   '/rank/': typeof RankIndexRoute
   '/api/trpc/$': typeof ApiTrpcSplatRoute
 }
@@ -88,7 +79,6 @@ export interface FileRouteTypes {
     | '/dashboard/$username'
     | '/about/'
     | '/compare/'
-    | '/leaderboard/'
     | '/rank/'
     | '/api/trpc/$'
   fileRoutesByTo: FileRoutesByTo
@@ -97,7 +87,6 @@ export interface FileRouteTypes {
     | '/dashboard/$username'
     | '/about'
     | '/compare'
-    | '/leaderboard'
     | '/rank'
     | '/api/trpc/$'
   id:
@@ -106,7 +95,6 @@ export interface FileRouteTypes {
     | '/dashboard/$username'
     | '/about/'
     | '/compare/'
-    | '/leaderboard/'
     | '/rank/'
     | '/api/trpc/$'
   fileRoutesById: FileRoutesById
@@ -116,7 +104,6 @@ export interface RootRouteChildren {
   DashboardUsernameRoute: typeof DashboardUsernameRoute
   AboutIndexRoute: typeof AboutIndexRoute
   CompareIndexRoute: typeof CompareIndexRoute
-  LeaderboardIndexRoute: typeof LeaderboardIndexRoute
   RankIndexRoute: typeof RankIndexRoute
   ApiTrpcSplatRoute: typeof ApiTrpcSplatRoute
 }
@@ -135,13 +122,6 @@ declare module '@tanstack/react-router' {
       path: '/rank'
       fullPath: '/rank/'
       preLoaderRoute: typeof RankIndexRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/leaderboard/': {
-      id: '/leaderboard/'
-      path: '/leaderboard'
-      fullPath: '/leaderboard/'
-      preLoaderRoute: typeof LeaderboardIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/compare/': {
@@ -180,7 +160,6 @@ const rootRouteChildren: RootRouteChildren = {
   DashboardUsernameRoute: DashboardUsernameRoute,
   AboutIndexRoute: AboutIndexRoute,
   CompareIndexRoute: CompareIndexRoute,
-  LeaderboardIndexRoute: LeaderboardIndexRoute,
   RankIndexRoute: RankIndexRoute,
   ApiTrpcSplatRoute: ApiTrpcSplatRoute,
 }
