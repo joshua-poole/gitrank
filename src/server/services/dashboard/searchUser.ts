@@ -62,16 +62,30 @@ async function fetchGitHubRepos(username: string) {
 }
 
 export async function searchUser(username: string): Promise<{ login: string }> {
-  const dbUser = await prisma.user.findUnique({
-    where: { username },
-  })
+  console.log('[searchUser] Looking up username:', username)
+
+  let dbUser
+  try {
+    dbUser = await prisma.user.findUnique({
+      where: { username },
+    })
+    console.log('[searchUser] DB lookup result:', dbUser)
+  } catch (err) {
+    console.error('[searchUser] DB lookup failed:', err)
+    throw new TRPCError({
+      code: 'INTERNAL_SERVER_ERROR',
+      message: 'Database lookup failed',
+    })
+  }
 
   if (dbUser) {
     return { login: dbUser.username }
   }
 
+  console.log('[searchUser] User not in DB, fetching from GitHub')
   const ghUser = await fetchGitHubUser(username)
   const repos = await fetchGitHubRepos(username)
+  console.log('[searchUser] GitHub data fetched, repos:', repos.length)
 
   const totalStars = repos.reduce(
     (sum: number, r: any) => sum + r.stargazers_count,
