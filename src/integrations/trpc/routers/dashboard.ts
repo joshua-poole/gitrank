@@ -1,11 +1,13 @@
 import { z } from 'zod'
 import { createTRPCRouter, publicProcedure } from '@/integrations/trpc/init'
-import { TRPCError } from '@trpc/server'
 import { getUserIcon } from '#/server/services/dashboard/getUserIcon'
 import { getUserStats } from '#/server/services/dashboard/getUserStats'
 import { getContributions } from '#/server/services/dashboard/getContributions'
 import { getUserRank } from '#/server/services/dashboard/getUserRank'
 import { searchUser } from '#/server/services/dashboard/searchUser'
+import { getTags } from '#/server/services/dashboard/getTags'
+import { getCommitMessages } from '#/server/services/dashboard/getCommitMessages'
+import { extractWords } from '#/lib/utils'
 
 export const dashboardRouter = createTRPCRouter({
   searchUser: publicProcedure
@@ -36,9 +38,22 @@ export const dashboardRouter = createTRPCRouter({
       return contributions
     }),
 
+  getCommitMessages: publicProcedure
+    .input(z.object({ username: z.string().min(1) }))
+    .query(async ({ input }) => {
+      const messages = await getCommitMessages(input.username)
+      return extractWords(messages)
+    }),
+
   getUserRank: publicProcedure
     .input(z.object({ username: z.string().min(1) }))
     .query(async ({ input }) => {
       return getUserRank(input.username)
+    }),
+
+  getUserTags: publicProcedure
+    .input(z.object({ username: z.string().min(1) }))
+    .query(async ({ input }) => {
+      return getTags(input.username)
     }),
 })

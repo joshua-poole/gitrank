@@ -15,14 +15,12 @@ async function fetchGitHubUser(username: string) {
   const res = await fetch(`https://api.github.com/users/${username}`, {
     headers: githubHeaders(),
   })
-
   if (res.status === 404) {
     throw new TRPCError({
       code: 'NOT_FOUND',
       message: `GitHub user "${username}" not found`,
     })
   }
-
   if (res.status === 403 || res.status === 429) {
     const resetHeader = res.headers.get('x-ratelimit-reset')
     const resetAt = resetHeader
@@ -34,7 +32,6 @@ async function fetchGitHubUser(username: string) {
       message: 'GitHub API rate limit exceeded. Please try again later.',
     })
   }
-
   if (!res.ok) {
     const body = await res.text()
     console.error(`GitHub API error: ${res.status} ${res.statusText}`, body)
@@ -43,7 +40,6 @@ async function fetchGitHubUser(username: string) {
       message: `GitHub API error: ${res.status} ${res.statusText}`,
     })
   }
-
   return res.json()
 }
 
@@ -52,13 +48,42 @@ async function fetchGitHubRepos(username: string) {
     `https://api.github.com/users/${username}/repos?per_page=100&sort=pushed`,
     { headers: githubHeaders() },
   )
-
   if (!res.ok) {
     console.error(`GitHub repos API error: ${res.status} ${res.statusText}`)
     return []
   }
-
   return res.json()
+}
+
+async function fetchTotalCommits(username: string): Promise<number> {
+  const res = await fetch(
+    `https://api.github.com/search/commits?q=author:${username}&per_page=1`,
+    {
+      headers: {
+        ...githubHeaders(),
+        Accept: 'application/vnd.github.cloak-preview+json',
+      },
+    },
+  )
+  if (!res.ok) {
+    console.error(`GitHub commits API error: ${res.status} ${res.statusText}`)
+    return 0
+  }
+  const data = await res.json()
+  return data.total_count ?? 0
+}
+
+async function fetchTotalPRs(username: string): Promise<number> {
+  const res = await fetch(
+    `https://api.github.com/search/issues?q=author:${username}+type:pr&per_page=1`,
+    { headers: githubHeaders() },
+  )
+  if (!res.ok) {
+    console.error(`GitHub PRs API error: ${res.status} ${res.statusText}`)
+    return 0
+  }
+  const data = await res.json()
+  return data.total_count ?? 0
 }
 
 export async function searchUser(username: string): Promise<{ login: string }> {
@@ -79,44 +104,53 @@ export async function searchUser(username: string): Promise<{ login: string }> {
   }
 
   if (dbUser) {
-    return { login: dbUser.username }
+    const today = new Date()
+    const lastUpdated = new Date(dbUser.lastUpdated)
+    const isToday =
+      lastUpdated.getFullYear() === today.getFullYear() &&
+      lastUpdated.getMonth() === today.getMonth() &&
+      lastUpdated.getDate() === today.getDate()
+
+    if (isToday) return { login: dbUser.username }
   }
 
-  console.log('[searchUser] User not in DB, fetching from GitHub')
-  const ghUser = await fetchGitHubUser(username)
-  const repos = await fetchGitHubRepos(username)
-  console.log('[searchUser] GitHub data fetched, repos:', repos.length)
+  const [ghUser, repos, totalCommits, totalPrs] = await Promise.all([
+    fetchGitHubUser(username),
+    fetchGitHubRepos(username),
+    fetchTotalCommits(username),
+    fetchTotalPRs(username),
+  ])
 
-  const totalStars = repos.reduce(
-    (sum: number, r: any) => sum + r.stargazers_count,
-    0,
-  )
-  const totalForks = repos.reduce(
-    (sum: number, r: any) => sum + r.forks_count,
-    0,
-  )
-  const languageCounts = repos.reduce(
-    (acc: Record<string, number>, r: any) => {
-      if (r.language) acc[r.language] = (acc[r.language] ?? 0) + 1
-      return acc
-    },
-    {},
-  )
+  const languageCounts = repos.reduce((acc: Record<string, number>, r: any) => {
+    if (r.language) acc[r.language] = (acc[r.language] ?? 0) + 1
+    return acc
+  }, {})
+
   const topLanguage =
     (Object.entries(languageCounts) as [string, number][]).sort(
       (a, b) => b[1] - a[1],
     )[0]?.[0] ?? null
 
   try {
-    await prisma.user.create({
-      data: {
+    await prisma.user.upsert({
+      where: { username: ghUser.login },
+      update: {
+        publicRepos: ghUser.public_repos ?? 0,
+        totalCommits,
+        totalPrs,
+        topLanguage,
+        location: ghUser.location ?? null,
+        company: ghUser.company ?? null,
+        website: ghUser.blog ?? null,
+      },
+      create: {
         username: ghUser.login,
         rank: 'UNRANKED',
         elo: 0,
         placementCompleted: false,
         publicRepos: ghUser.public_repos ?? 0,
-        totalStars,
-        totalForks,
+        totalCommits,
+        totalPrs,
         topLanguage,
         location: ghUser.location ?? null,
         company: ghUser.company ?? null,
@@ -125,7 +159,7 @@ export async function searchUser(username: string): Promise<{ login: string }> {
       },
     })
   } catch (err) {
-    console.error('Failed to create user in database:', err)
+    console.error('Failed to save user data:', err)
     throw new TRPCError({
       code: 'INTERNAL_SERVER_ERROR',
       message: 'Failed to save user data',

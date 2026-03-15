@@ -3,8 +3,8 @@ import { TRPCError } from '@trpc/server'
 
 export interface UserStats {
   publicRepos: number
-  totalStars: number
-  totalForks: number
+  totalCommits: number
+  totalPrs: number
   topLanguage: string | null
   location: string | null
   company: string | null
@@ -17,8 +17,8 @@ export async function getUserStats(username: string): Promise<UserStats> {
     where: { username },
     select: {
       publicRepos: true,
-      totalStars: true,
-      totalForks: true,
+      totalCommits: true,
+      totalPrs: true,
       topLanguage: true,
       location: true,
       company: true,
@@ -31,8 +31,8 @@ export async function getUserStats(username: string): Promise<UserStats> {
 
   return {
     publicRepos: user.publicRepos,
-    totalStars: user.totalStars,
-    totalForks: user.totalForks,
+    totalCommits: user.totalCommits,
+    totalPrs: user.totalPrs,
     topLanguage: user.topLanguage,
     location: user.location,
     company: user.company,

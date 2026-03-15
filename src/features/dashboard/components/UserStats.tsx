@@ -36,8 +36,8 @@ export function UserStats({ username }: UserStatsProps) {
     <div className="space-y-4">
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
         <StatCard label="Public Repos" value={data.publicRepos} />
-        <StatCard label="Total Stars" value={data.totalStars} />
-        <StatCard label="Total Forks" value={data.totalForks} />
+        <StatCard label="Public Commits" value={data.totalCommits} />
+        <StatCard label="Public Prs" value={data.totalPrs} />
         <StatCard label="Top Language" value={data.topLanguage ?? 'N/A'} />
       </div>
 
